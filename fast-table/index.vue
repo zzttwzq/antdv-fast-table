@@ -14,7 +14,7 @@
           <a-button @click="add" type="primary">新建</a-button>
           <slot name="leftButtons"></slot>
         </a-space>
-        <standard-table
+        <StandardTable
           rowKey="id"
           :columns="columns2"
           :dataSource="dataSource"
@@ -32,7 +32,7 @@
             <a v-if="!disableDeleteAction" @click="deleteRecord(record.id)"> 删除 </a>
             <slot name="buttons" :record="record"></slot>
           </div>
-        </standard-table>
+        </StandardTable>
       </div>
     </a-card>
     <!-- 角色添加和修改 -->
