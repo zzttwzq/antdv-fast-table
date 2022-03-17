@@ -75,7 +75,7 @@
     </div>
 
     <!-- 时间日期选择器 -->
-    <a-range-picker
+    <a-date-picker
       style="width: 100%"
       v-else-if="item.type == 'date'"
       :showTime="item.showTime"

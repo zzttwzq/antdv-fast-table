@@ -125,6 +125,10 @@ export default {
       this.selectTagId = "";
       this.$emit("clearSearch", null);
     },
+    // 获取form表单
+    getForm() {
+      return this.form;
+    },
     // 设置form内容
     setFormValues(formValues) {
       return this.form.setFieldsValue(formValues);

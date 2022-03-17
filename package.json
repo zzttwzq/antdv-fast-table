@@ -1,6 +1,6 @@
 {
     "name": "antdv-fast-table",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "针对antdv UI框架快速创建后台管理列表增删改查等功能的组件库",
     "main": "index.js",
     "scripts": {
@@ -22,6 +22,20 @@
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/essential",
+            "eslint:recommended"
+        ],
+        "parserOptions": {
+            "parser": "babel-eslint"
+        },
+        "rules": {}
     },
     "homepage": "https://github.com/zzttwzq/antdv-fast-table#readme"
 }

@@ -7,12 +7,16 @@
           @searchData="searchData"
           @clearSearch="clearSearch"
           v-if="searchList2.length"
+          ref="search"
         ></SimpleSearchView>
       </div>
       <div>
         <a-space class="operator">
-          <a-button v-if="disableAddAction" @click="add" type="primary">新建</a-button>
-          <slot name="leftButtons"></slot>
+          <div>
+            <a-button v-if="disableAddAction" @click="add" type="primary">新建</a-button>
+            <slot name="topLeftButtons"></slot>
+          </div>
+          <slot name="topRightButtons"></slot>
         </a-space>
         <StandardTable
           rowKey="id"
@@ -162,17 +166,22 @@ export default {
       type: Function,
       required: false,
     },
-    // 处理新增修改数据 Boolen<是否继续执行> Function() 
+    // 处理新增修改数据 Function(<修改后的数据>)
+    handelWillSearch: {
+      type: Function,
+      required: false,
+    },
+    // 处理新增修改数据 Function()
     handelWillAdd: {
       type: Function,
       required: false,
     },
-    // 处理即将点击修改按钮 Boolen<是否继续执行> Function(<修改前的数据>) 
+    // 处理即将点击修改按钮 Function(<修改前的数据>)
     handelWillEdit: {
       type: Function,
       required: false,
     },
-    // 处理新增修改数据 Function(<修改后的数据>) 
+    // 处理新增修改数据 Function(<修改后的数据>)
     handelModifyData: {
       type: Function,
       required: false,
@@ -357,7 +366,13 @@ export default {
       });
     },
 
-    // 设置数据
+    // 设置搜索数据
+    setSearchValues(formValues) {
+      console.log(this.$refs.search);
+
+      this.$refs.search.getForm().setFieldsValue(formValues);
+    },
+    // 设置表单数据
     setFormValues(formValues) {
       console.log(this.$refs.form);
 
@@ -367,11 +382,20 @@ export default {
     // table操作
     searchData(e) {
       this.search = e;
+
+      if (this.handelWillSearch) {
+        this.handelWillSearch(e);
+      }
+
       this.pagination.page = "1";
       this.getList();
     },
     clearSearch() {
       this.search = {};
+      if (this.handelWillSearch) {
+        this.handelWillSearch({});
+      }
+
       this.pagination.page = "1";
       this.getList();
     },
@@ -400,7 +424,7 @@ export default {
       }
 
       let data = "";
-      if (this.addRequest) {
+      if (this.listRequest) {
         data = await this.listRequest(params);
       } else {
         data = await this.$request(this.listUrl, "post", params);
@@ -443,6 +467,10 @@ export default {
 
 .operator {
   margin-bottom: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
 }
 
 @media screen and (max-width: 900px) {
