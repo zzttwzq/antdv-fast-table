@@ -11,7 +11,7 @@
       </div>
       <div>
         <a-space class="operator">
-          <a-button @click="add" type="primary">新建</a-button>
+          <a-button v-if="disableAddAction" @click="add" type="primary">新建</a-button>
           <slot name="leftButtons"></slot>
         </a-space>
         <StandardTable
@@ -100,6 +100,12 @@ export default {
       required: false,
       default: false,
     },
+    // 禁用自带的编辑操作功能
+    disableAddAction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
 
     ///========= 接口请求
     listUrl: {
@@ -156,18 +162,18 @@ export default {
       type: Function,
       required: false,
     },
-    // 处理即将新增数据
+    // 处理新增修改数据 Boolen<是否继续执行> Function() 
     handelWillAdd: {
       type: Function,
       required: false,
     },
-    // 处理新增修改数据
-    handelModifyData: {
+    // 处理即将点击修改按钮 Boolen<是否继续执行> Function(<修改前的数据>) 
+    handelWillEdit: {
       type: Function,
       required: false,
     },
-    // 处理即将点击修改按钮
-    handelWillEdit: {
+    // 处理新增修改数据 Function(<修改后的数据>) 
+    handelModifyData: {
       type: Function,
       required: false,
     },
@@ -274,8 +280,7 @@ export default {
           if (this.handelModifyData) {
             this.handelModifyData(values);
           }
-
-          console.log(values);
+          console.log(">>> values", values);
 
           if (this.isAdd) {
             try {
@@ -285,10 +290,11 @@ export default {
               } else {
                 data = await this.$request(this.addUrl, "POST", values);
               }
+              console.log(">>>> addRequest", data);
+
               if (this.handelAddResult) {
                 this.handelAddResult(true, data);
               } else {
-                console.log(">>>>addRequest", data);
                 this.getList();
               }
             } catch (error) {
@@ -302,10 +308,11 @@ export default {
               } else {
                 data = await this.$request(this.editUrl, "POST", values);
               }
+              console.log(">>>> editRequest", data);
+
               if (this.handelEditResult) {
                 this.handelEditResult(true, data);
               } else {
-                console.log(">>>>editRequest", data);
                 this.getList();
               }
             } catch (error) {
@@ -334,11 +341,11 @@ export default {
                 id: [e],
               });
             }
+            console.log(">>>> delRequest", data);
 
             if (self.handelDeleteResult) {
               self.handelDeleteResult(true, data);
             } else {
-              console.log(">>>>delRequest", data);
               self.getList();
             }
           } catch (error) {

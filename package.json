@@ -1,10 +1,10 @@
 {
     "name": "antdv-fast-table",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "针对antdv UI框架快速创建后台管理列表增删改查等功能的组件库",
     "main": "index.js",
     "scripts": {
-        "test": "antdv-fast-table"
+        "test": "jest"
     },
     "repository": {
         "type": "git",
@@ -19,6 +19,9 @@
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/zzttwzq/antdv-fast-table/issues"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
     },
     "homepage": "https://github.com/zzttwzq/antdv-fast-table#readme"
 }

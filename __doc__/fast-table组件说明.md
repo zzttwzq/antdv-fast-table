@@ -3,37 +3,38 @@
 该组件是为了方便后台管理系统写列表增删改查功能而创建的；
 
 ## 组件API说明
-| 名称                       | 说明                   | 类型                                   | 是否必须 | 默认值 | 范例                              |
-| -------------------------- | ---------------------- | -------------------------------------- | -------- | ------ | --------------------------------- |
-| __属性(数据源)__           |                        |                                        |          |        |                                   |
-| *columns*                  | 表头数组               | Array                                  | true     | []     | 这个沿用antd或者elment的table表头 |
-| *searchList*               | 表头数组[^说明1]       | Array                                  | true     | []     | 搜索内容视图内容                  |
-| *formList*                 | 表头数组[^说明1]       | Array                                  | true     | []     | 新增和修改内容                    |
-| *title*                    | 页面的标题             | String                                 | false    |        | 如角色管理等                      |
-| __属性(页面功能)__         |                        |                                        |          |        |                                   |
-| *disableDeleteAction*      | 禁用自带的删除操作功能 | Boolean                                | false    |        |                                   |
-| *disableEditAction*        | 禁用自带的编辑操作功能 | Boolean                                | false    |        |                                   |
-| __属性(接口请求)[^说明2]__ |                        |                                        |          |        |                                   |
-| *listUrl*                  | 列表接口               | String                                 | false    |        |                                   |
-| *addUrl*                   | 新增接口               | String                                 | false    |        |                                   |
-| *editDetailUrl*            | 获取详情接口           | String                                 | false    |        |                                   |
-| *editUrl*                  | 修改接口               | String                                 | false    |        |                                   |
-| *deleteUrl*                | 删除接口               | String                                 | false    |        |                                   |
-| *listRequest*              | 列表接口               | Object<Promise>                        | false    |        |                                   |
-| *addRequest*               | 新增接口               | Object<Promise>                        | false    |        |                                   |
-| *editDetailRequest*        | 获取详情接口           | Object<Promise>                        | false    |        |                                   |
-| *editRequest*              | 修改接口               | Object<Promise>                        | false    |        |                                   |
-| *deleteRequest*            | 删除接口               | Object<Promise>                        | false    |        |                                   |
-| __方法__                   |                        |                                        |          |        |                                   |
-| *handelListData*           | 处理列表数据           | Function(<处理的数据>)                 | false    |        |                                   |
-| *handelWillAdd*            | 处理即将新增数据       | Function()                             | false    |        |                                   |
-| *handelModifyData*         | 处理新增修改数据       | Function(<处理的数据>)                 | false    |        |                                   |
-| *handelWillEdit*           | 处理即将点击修改按钮   | Function(<item的数据>)                 | false    |        |                                   |
-| *handelAddResult*          | 处理新增返回结果       | Function(<请求成功状态>, <请返回结果>) | false    |        |                                   |
-| *handelEditResult*         | 处理修改返回结果       | Function(<请求成功状态>, <请返回结果>) | false    |        |                                   |
-| *handelDeleteResult*       | 处理删除返回结果       | Function(<请求成功状态>, <请返回结果>) | false    |        |                                   |
-| __插槽(slot)__             |                        |                                        |          |        |                                   |
-| *buttons:data*             | 列表操作列自定义按钮   |                                        | false    |        | 会返回当前列的data                |
+| 名称                       | 说明                   | 类型                                          | 是否必须 | 默认值 | 范例                              |
+| -------------------------- | ---------------------- | --------------------------------------------- | -------- | ------ | --------------------------------- |
+| __属性(数据源)__           |                        |                                               |          |        |                                   |
+| *columns*                  | 表头数组               | Array                                         | true     | []     | 这个沿用antd或者elment的table表头 |
+| *searchList*               | 表头数组[^说明1]       | Array                                         | true     | []     | 搜索内容视图内容                  |
+| *formList*                 | 表头数组[^说明1]       | Array                                         | true     | []     | 新增和修改内容                    |
+| *title*                    | 页面的标题             | String                                        | false    |        | 如角色管理等                      |
+| __属性(页面功能)__         |                        |                                               |          |        |                                   |
+| *disableAddAction*         | 禁用自带的新增操作功能 | Boolean                                       | false    |        |                                   |
+| *disableDeleteAction*      | 禁用自带的删除操作功能 | Boolean                                       | false    |        |                                   |
+| *disableEditAction*        | 禁用自带的编辑操作功能 | Boolean                                       | false    |        |                                   |
+| __属性(接口请求)[^说明2]__ |                        |                                               |          |        |                                   |
+| *listUrl*                  | 列表接口               | String                                        | false    |        |                                   |
+| *addUrl*                   | 新增接口               | String                                        | false    |        |                                   |
+| *editDetailUrl*            | 获取详情接口           | String                                        | false    |        |                                   |
+| *editUrl*                  | 修改接口               | String                                        | false    |        |                                   |
+| *deleteUrl*                | 删除接口               | String                                        | false    |        |                                   |
+| *listRequest*              | 列表接口               | Object<Promise>                               | false    |        |                                   |
+| *addRequest*               | 新增接口               | Object<Promise>                               | false    |        |                                   |
+| *editDetailRequest*        | 获取详情接口           | Object<Promise>                               | false    |        |                                   |
+| *editRequest*              | 修改接口               | Object<Promise>                               | false    |        |                                   |
+| *deleteRequest*            | 删除接口               | Object<Promise>                               | false    |        |                                   |
+| __方法__                   |                        |                                               |          |        |                                   |
+| *handelListData*           | 处理列表数据           | Function(<处理的数据>)                        | false    |        |                                   |
+| *handelWillAdd*            | 处理即将新增数据       | Boolen<是否继续执行> Function()               | false    |        |                                   |
+| *handelModifyData*         | 处理新增修改数据       | Function(<修改后的数据>)                      | false    |        |                                   |
+| *handelWillEdit*           | 处理即将点击修改按钮   | Boolen<是否继续执行> Function(<修改前的数据>) | false    |        |                                   |
+| *handelAddResult*          | 处理新增返回结果       | Function(<请求成功状态>, <请返回结果>)        | false    |        |                                   |
+| *handelEditResult*         | 处理修改返回结果       | Function(<请求成功状态>, <请返回结果>)        | false    |        |                                   |
+| *handelDeleteResult*       | 处理删除返回结果       | Function(<请求成功状态>, <请返回结果>)        | false    |        |                                   |
+| __插槽(slot)__             |                        |                                               |          |        |                                   |
+| *buttons:data*             | 列表操作列自定义按钮   |                                               | false    |        | 会返回当前列的data                |
 
 ---
 ### 用例

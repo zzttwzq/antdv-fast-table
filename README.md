@@ -9,3 +9,6 @@
 
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
+
+# 1.0.3 更新
+1. 新增 disableAddAction 属性，可以隐藏内置的新增按钮
