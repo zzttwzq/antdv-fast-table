@@ -13,7 +13,7 @@
       <div>
         <a-space class="operator">
           <div>
-            <a-button v-if="disableAddAction" @click="add" type="primary">新建</a-button>
+            <a-button v-if="!disableAddAction" @click="add" type="primary">新建</a-button>
             <slot name="topLeftButtons"></slot>
           </div>
           <slot name="topRightButtons"></slot>
@@ -368,14 +368,10 @@ export default {
 
     // 设置搜索数据
     setSearchValues(formValues) {
-      console.log(this.$refs.search);
-
       this.$refs.search.getForm().setFieldsValue(formValues);
     },
     // 设置表单数据
     setFormValues(formValues) {
-      console.log(this.$refs.form);
-
       this.$refs.form.getForm().setFieldsValue(formValues);
     },
 

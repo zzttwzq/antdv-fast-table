@@ -10,7 +10,5 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
-# 1.0.4 更新
-1. 新增 topLeftButtons 表格顶部左侧按钮
-2. 新增 topRightButtons 表格顶部右侧按钮
-3. 新增 handelWillSearch 功能，在搜索之前对数据进行处理
+# 1.0.5 更新
+1. 修复 disableEditAction disableAddAction disableDeleteAction 3个属性导致的按钮问题
