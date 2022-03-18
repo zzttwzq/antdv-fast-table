@@ -5,9 +5,8 @@
 npm who am i
 
 # # 发布
-npm publish
+# npm publish
 if [ $? != 0 ]; then
-    npm publish
     exit 0
 fi
 
@@ -16,8 +15,9 @@ git add .
 
 # git 提交内容
 read -p "请输入提交版本号：" v
-read -p "请输入提交内容：" input
-echo "feat()：<$v> $input"
-git commit -m "feat()：<$v> $input"
+# read -p "请输入提交内容：" input
+echo 'update()：<'$v'> 详见readme.md文件'
+git commit -m 'update()：<'$v'> 详见readme.md文件'
 
 git push
+

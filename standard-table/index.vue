@@ -5,19 +5,18 @@
       :loading="loading"
       :columns="columns"
       :dataSource="dataSource"
-      :pagination="pagination"
+      :pagination="pagination ? pagination : false"
       :rowKey="rowKey"
       :expandedRowKeys="expandedRowKeys"
       :expandedRowRender="expandedRowRender"
       :scroll="scroll"
       @change="onChange"
-      @expand="onExpand"
+      @expand="(expanded, item) => { onExpand ? onExpand(expanded, item) : null; }"
       :rowSelection="
         selectedRows
           ? { selectedRowKeys: selectedRowKeys, onChange: updateSelect }
           : undefined
       "
-
     >
       <template
         slot-scope="text, record, index"
@@ -56,19 +55,11 @@ export default {
       type: [String, Function],
       default: "key",
     },
-    pagination: {
-      type: Object,
-      default: () => {
-        return {
-          current: 1,
-          pageSize: 10,
-          total: 0,
-        };
-      },
-    },
+    pagination: Object,
     selectedRows: Array,
     expandedRowKeys: Array,
     expandedRowRender: Function,
+    onExpand: Function,
     scroll: {
       x: Number,
       y: Number,
@@ -101,11 +92,6 @@ export default {
     },
     onChange(pagination, filters, sorter, { currentDataSource }) {
       this.$emit("change", pagination, filters, sorter, { currentDataSource });
-    },
-    onExpand(expanded, record) {
-      // console.log(expanded);
-      // console.log(record);
-      this.$emit("expand", { expanded, record });
     },
   },
   created() {

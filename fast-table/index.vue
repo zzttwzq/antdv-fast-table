@@ -20,11 +20,12 @@
         </a-space>
         <StandardTable
           rowKey="id"
+          :loading="loading"
           :columns="columns2"
           :dataSource="dataSource"
-          :pagination="pagination"
+          :pagination="disablePagination ? null : pagination"
           @change="change"
-          :loading="loading"
+          :onExpand="onExpand"
         >
           <div slot="description" slot-scope="{ text }">
             {{ text }}
@@ -49,8 +50,8 @@
       @ok="submit"
     >
       <CustomFormList
-        @prefixClick="prefixClick"
-        @suffixClick="suffixClick"
+        :prefixClick="prefixClick"
+        :suffixClick="suffixClick"
         ref="form"
         :list="formList2"
         :showBtns="false"
@@ -88,7 +89,7 @@ export default {
     // 标题
     title: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     ///========= 页面功能
@@ -106,6 +107,18 @@ export default {
     },
     // 禁用自带的编辑操作功能
     disableAddAction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    // 禁用table底部的cardview
+    disableBackCardView: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    // 禁用table底部的Pagination
+    disablePagination: {
       type: Boolean,
       required: false,
       default: false,
@@ -160,14 +173,31 @@ export default {
       required: false,
     },
 
-    ///========= 回调
-    // 处理列表数据
-    handelListData: {
+    // ========= 方法
+    // 扩展点击的时候 Function(expanded<Boolen>, rowItem<Object>)
+    onExpand: {
       type: Function,
       required: false,
     },
+    // pagination, filters or sorter 改变回调 Function(pagination<Object>, filters<Object>, sorter<Object>)
+    onChange: {
+      type: Function,
+      required: false,
+    },
+
+    ///========= 回调
     // 处理新增修改数据 Function(<修改后的数据>)
     handelWillSearch: {
+      type: Function,
+      required: false,
+    },
+    // 处理即将调用请求接口 Function(<params参数>)
+    handelWillGetList: {
+      type: Function,
+      required: false,
+    },
+    // 处理列表数据
+    handelListData: {
       type: Function,
       required: false,
     },
@@ -193,6 +223,11 @@ export default {
     },
     // 处理修改返回结果 Function(<请求成功状态>, <请返回结果>)
     handelEditResult: {
+      type: Function,
+      required: false,
+    },
+    // 处理即将删除操作 Function(params<Object>)
+    handelWillDelete: {
       type: Function,
       required: false,
     },
@@ -241,11 +276,22 @@ export default {
     this.getList();
   },
   methods: {
+    // ============= 其他方法
+    // 设置搜索数据
+    setSearchValues(formValues) {
+      this.$refs.search.getForm().setFieldsValue(formValues);
+    },
+    // 设置表单数据
+    setFormValues(formValues) {
+      this.$refs.form.getForm().setFieldsValue(formValues);
+    },
+
+    // ============= 增加，修改，删除方法
     // 增加删除修改操作
-    add() {
-      if (this.handelWillAdd) {
-        this.handelWillAdd();
-      }
+    async add() {
+      // 新增即将开始
+      this.handelWillAdd ? await await this.handelWillAdd() : null;
+
       this.isAdd = true;
       this.visible = true;
       this.$nextTick(() => {
@@ -264,9 +310,8 @@ export default {
         this.editData.tag_id = Number(this.editData.tag_id);
       }
 
-      if (this.handelWillEdit) {
-        this.handelWillEdit(this.editData);
-      }
+      // 修改即将开始
+      this.handelWillEdit ? await await this.handelWillEdit(this.editData) : null;
 
       this.isAdd = false;
       this.visible = true;
@@ -281,51 +326,48 @@ export default {
 
       this.$refs.form.getForm().validateFields(async (err, values) => {
         if (!err) {
-          /// 增加id数据
+          /// 判断如果是修改就添加id字段
           if (!this.isAdd) {
             values.id = this.editData.id;
           }
-          /// 修改数据
-          if (this.handelModifyData) {
-            this.handelModifyData(values);
-          }
+
+          // 增加或修改即将开始
+          this.handelModifyData ? await this.handelModifyData(values) : null;
           console.log(">>> values", values);
 
           if (this.isAdd) {
             try {
+              // 新增请求开始
               let data = "";
-              if (this.addRequest) {
-                data = await this.addRequest(values);
-              } else {
-                data = await this.$request(this.addUrl, "POST", values);
-              }
+              this.addRequest
+                ? (data = await this.addRequest(values))
+                : (data = await this.$request(this.addUrl, "POST", values));
               console.log(">>>> addRequest", data);
 
-              if (this.handelAddResult) {
-                this.handelAddResult(true, data);
-              } else {
-                this.getList();
-              }
+              // 新增结果返回
+              this.handelAddResult
+                ? await this.handelAddResult(true, data)
+                : await this.getList();
             } catch (error) {
-              this.handelAddResult ? this.handelAddResult(false, error) : "";
+              // 新增失败返回
+              this.handelAddResult ? await this.handelAddResult(false, error) : "";
             }
           } else {
             try {
+              // 修改请求开始
               let data = "";
-              if (this.addRequest) {
-                data = await this.editRequest(values);
-              } else {
-                data = await this.$request(this.editUrl, "POST", values);
-              }
+              this.editRequest
+                ? (data = await this.editRequest(values))
+                : (data = await this.$request(this.editUrl, "POST", values));
               console.log(">>>> editRequest", data);
 
-              if (this.handelEditResult) {
-                this.handelEditResult(true, data);
-              } else {
-                this.getList();
-              }
+              // 修改请求返回
+              this.handelEditResult
+                ? await this.handelEditResult(true, data)
+                : await this.getList();
             } catch (error) {
-              this.handelEditResult ? this.handelEditResult(false, error) : "";
+              // 修改失败返回
+              this.handelEditResult ? await this.handelEditResult(false, error) : "";
             }
           }
 
@@ -342,60 +384,49 @@ export default {
         cancelText: "取消",
         async onOk() {
           try {
+            // 请求即将开始
+            let params = {};
+            params = [e];
+            this.handelWillDelete ? await this.handelWillDelete(params) : null;
+
+            // 请求删除数据
             let data = "";
-            if (self.addRequest) {
-              data = await self.deleteRequest([e]);
-            } else {
-              data = await self.$request(self.deleteUrl, "post", {
-                id: [e],
-              });
-            }
+            this.deleteRequest
+              ? (data = await this.deleteRequest(params))
+              : (data = await this.$request(this.deleteUrl, "POST", params));
             console.log(">>>> delRequest", data);
 
-            if (self.handelDeleteResult) {
-              self.handelDeleteResult(true, data);
-            } else {
-              self.getList();
-            }
+            // 请求删除返回结果
+            self.handelDeleteResult
+              ? await self.handelDeleteResult(true, data)
+              : await self.getList();
           } catch (error) {
-            if (self.handelDeleteResult) {
-              self.handelDeleteResult(false, error);
-            }
+            self.handelDeleteResult ? await self.handelDeleteResult(false, error) : "";
           }
         },
       });
     },
 
-    // 设置搜索数据
-    setSearchValues(formValues) {
-      this.$refs.search.getForm().setFieldsValue(formValues);
-    },
-    // 设置表单数据
-    setFormValues(formValues) {
-      this.$refs.form.getForm().setFieldsValue(formValues);
-    },
-
+    // ============= 搜索和列表方法
     // table操作
-    searchData(e) {
+    async searchData(e) {
       this.search = e;
 
-      if (this.handelWillSearch) {
-        this.handelWillSearch(e);
-      }
+      // 即将开始搜索
+      this.handelWillSearch ? await this.handelWillSearch(e) : null
 
       this.pagination.page = "1";
-      this.getList();
+      await this.getList();
     },
-    clearSearch() {
+    async clearSearch() {
       this.search = {};
-      if (this.handelWillSearch) {
-        this.handelWillSearch({});
-      }
+      // 即将开始搜索
+      this.handelWillSearch ? await this.handelWillSearch({}) : null
 
       this.pagination.page = "1";
-      this.getList();
+      await this.getList();
     },
-    change(pagination, filters, sorter) {
+    async change(pagination, filters, sorter) {
       console.log(pagination);
       console.log(filters);
       console.log(sorter);
@@ -403,7 +434,11 @@ export default {
 
       localStorage.setItem("pageSize", pagination.pageSize);
 
-      this.getList();
+      if (this.onChange) {
+        await this.onChange();
+      } else {
+        await this.getList();
+      }
     },
     async getList() {
       this.loading = true;
@@ -419,6 +454,9 @@ export default {
         delete params.time;
       }
 
+      // 即将开始请求列表接口
+      this.handelWillGetList ? await this.handelWillGetList(params) : null;
+
       let data = "";
       if (this.listRequest) {
         data = await this.listRequest(params);
@@ -426,11 +464,16 @@ export default {
         data = await this.$request(this.listUrl, "post", params);
       }
 
+      // 请求返回处理数据
       if (this.handelListData) {
-        this.handelListData(data.data);
+        if (data.data) {
+          await this.handelListData(data.data);
+          this.dataSource = data.data;
+        } else {
+          await this.handelListData(data);
+          this.dataSource = data;
+        }
       }
-
-      this.dataSource = data.data;
 
       this.pagination = {
         ...this.pagination,
