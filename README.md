@@ -10,6 +10,8 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+# 1.0.7
+1. 修复 handelListData 不会调用的bug
 # 1.0.6
 - 页面功能
   - 新增 disableBackCardView 禁用table底层的Cardview；

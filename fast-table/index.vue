@@ -465,14 +465,12 @@ export default {
       }
 
       // 请求返回处理数据
-      if (this.handelListData) {
-        if (data.data) {
-          await this.handelListData(data.data);
-          this.dataSource = data.data;
-        } else {
-          await this.handelListData(data);
-          this.dataSource = data;
-        }
+      if (data.data) {
+        this.handelListData ? await this.handelListData(data.data) : null;
+        this.dataSource = data.data;
+      } else {
+        this.handelListData ? await this.handelListData(data) : null;
+        this.dataSource = data;
       }
 
       this.pagination = {
