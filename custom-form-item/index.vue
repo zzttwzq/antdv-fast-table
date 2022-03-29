@@ -1,14 +1,19 @@
 <template>
   <a-form-item
     :label="item.name"
-    :labelCol="{ span: item.formLabelWidth ? item.formLabelWidth : 6 }"
-    :wrapperCol="{ span: item.formWrapperWidth ? item.formWrapperWidth : 18 }"
+    :labelCol="{
+      span: item.formLabelWidth ? item.formLabelWidth : 6,
+      offset: item.formLabelOffset ? item.formLabelOffset : 0,
+    }"
+    :wrapperCol="{
+      span: item.formWrapperWidth ? item.formWrapperWidth : 18,
+      offset: item.formWrapperOffset ? item.formWrapperOffset : 0,
+    }"
     :labelAlign="item.labelAlign ? item.labelAlign : 'right'"
   >
     <!-- 文本类型 -->
     <a-input
       v-if="item.type == 'text'"
-      style="width: 100%"
       :disabled="item.disabled ? true : false"
       v-decorator="item.decorator"
       :placeholder="item.placeholder ? item.placeholder : '请输入'"
@@ -62,12 +67,14 @@
     <!-- 数字范围类型 -->
     <div v-else-if="item.type == 'numberRange'">
       <a-input-number
+      style="width: 100%"
         v-decorator="item.decorator"
         :precision="item.precision ? Number(item.precision) : 0"
         :placeholder="item.placeholder ? item.placeholder : '请输入'"
       />
       &nbsp;<span>至</span>&nbsp;
       <a-input-number
+      style="width: 100%"
         v-decorator="item.decorator2"
         :precision="item.precision2 ? Number(item.precision2) : 0"
         :placeholder="item.placeholder2 ? item.placeholder2 : '请输入'"
@@ -165,6 +172,12 @@ export default {
       required: false,
       default: () => {},
     },
+    // 内容改动
+    change: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
   },
   data() {
     return {};
@@ -174,6 +187,9 @@ export default {
     disabledDate(current) {
       return current && current < moment().endOf("day").subtract(1, "days");
     },
+  },
+  change(e) {
+    this.change(this.item, e);
   },
 };
 </script>

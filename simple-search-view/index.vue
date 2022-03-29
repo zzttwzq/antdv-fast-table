@@ -6,15 +6,9 @@
         justify="start"
         align="middle"
         :key="index"
-        v-for="(li, index) in searchList"
+        v-for="(li, index) in collape ? searchCollapeList : searchList"
       >
-        <a-col
-          :span="1"
-          :key="index * 10 + index2"
-          :md="8"
-          :sm="24"
-          v-for="(item, index2) in li"
-        >
+        <a-col :span="1" :key="index * 10 + index2" :md="md" v-for="(item, index2) in li">
           <CustomFormItem
             :prefixClick="prefixClick"
             :suffixClick="suffixClick"
@@ -22,10 +16,23 @@
           ></CustomFormItem>
         </a-col>
       </a-row>
-      <span v-if="searchList.length > 0" style="float: right; margin-top: 3px">
-        <a-button @click="searchData" type="primary">查询</a-button>
-        <a-button @click="clearSearch" style="margin-left: 8px">重置</a-button>
-      </span>
+      <div v-if="searchList.length > 0" :class="['button-back', alginMap[algin]]">
+        <a-button @click="searchData" class="announce-button" type="primary">{{
+          searchButtonText
+        }}</a-button>
+        <div class="announce-button-space"></div>
+        <a-button @click="clearSearch" class="announce-button">
+          {{ clearButtonText }}</a-button
+        >
+        <div class="announce-button-space"></div>
+        <slot name="bottomButtons"></slot>
+
+        <div v-if="enableCollape" class="announce-button-space"></div>
+        <div @click="clickCollape" v-if="enableCollape" class="show-button-back">
+          <span class="name">{{ collape ? "显示" : "收起" }}</span>
+          <a-icon style="margin-left: 5px" :type="collape ? 'down' : 'up'" />
+        </div>
+      </div>
     </a-form>
   </div>
 </template>
@@ -34,12 +41,47 @@
 export default {
   name: "SimpleSearchView",
   props: {
+    //*** datasource */
     // 列表数据
     list: {
       type: Array,
       required: true,
       default: () => [],
     },
+    rowCount: {
+      type: Number,
+      required: false,
+      default: 3,
+    },
+    searchButtonText: {
+      type: String,
+      required: false,
+      default: "查询",
+    },
+    clearButtonText: {
+      type: String,
+      required: false,
+      default: "重置",
+    },
+    enableCollape: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showRows: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
+
+    //** styles */
+    algin: {
+      type: String,
+      required: false,
+      default: "left",
+    },
+
+    //** functions */
     // 内容前部区域点击如：input的prefix
     prefixClick: {
       type: Function,
@@ -57,9 +99,22 @@ export default {
     return {
       list2: this.list,
       searchList: [],
+      searchCollapeList: [],
       selectTagId: "",
       form: this.$form.createForm(this),
+      collape: true,
+      alginMap: {
+        left: "flex-row-left",
+        center: "flex-row-center",
+        space: "flex-row-space",
+        right: "flex-row-right",
+      },
     };
+  },
+  computed: {
+    md() {
+      return Math.ceil(24 / this.rowCount);
+    },
   },
   mounted() {
     this.handelSearchList();
@@ -73,10 +128,12 @@ export default {
   methods: {
     handelSearchList() {
       /// 分割成每个行，每行3个
-      let rowCount = 3;
       let i = 0;
       let li = [];
       let list = [];
+      let list2 = [];
+      let row = 0;
+
       this.list2.map((it) => {
         // if (it.type != "numberRange") {
         //   this.search[it.fieldName] = it.value;
@@ -86,19 +143,41 @@ export default {
         // }
 
         it.labelAlign = "left";
-        if (it.decorator[1].rules && it.decorator[1].rules.length > 0) {
+        if (
+          it.decorator.length > 1 &&
+          it.decorator[1].rules &&
+          it.decorator[1].rules.length > 0
+        ) {
           it.decorator[1].rules[0].required = false;
         }
 
-        if (i % rowCount != 0) {
+        if (i % this.rowCount != 0) {
           li.push(it);
         } else {
+          row++;
+
           if (i != 0) {
             list.push(li);
           }
+
+          if (this.enableCollape) {
+            // console.log("row", row);
+            // console.log("i", i);
+            // console.log("it", it);
+            // console.log("li", li);
+            // console.log("this.showRows", this.showRows);
+            // console.log("?", this.showRows >= row);
+            if (this.showRows >= row) {
+              if (i != 0) {
+                list2.push(li);
+              }
+            }
+          }
+
           li = [];
           li.push(it);
         }
+
         i++;
       });
 
@@ -108,6 +187,7 @@ export default {
         list.push(li);
       }
       this.searchList = list;
+      this.searchCollapeList = list2;
 
       // console.log(this.searchList);
     },
@@ -136,6 +216,9 @@ export default {
     buttonClick(item) {
       this.selectTagId = item.index;
     },
+    clickCollape() {
+      this.collape = !this.collape;
+    },
   },
 };
 </script>
@@ -143,5 +226,12 @@ export default {
 <style lang="less" scoped>
 .search {
   margin-bottom: 54px;
+  .button-back {
+    display: flex;
+  }
+}
+.show-button-back {
+  // background: red;
+  cursor: pointer;
 }
 </style>

@@ -22,10 +22,17 @@
           :key="index"
           v-for="(item, index) in list2"
         >
+          <slot
+            v-if="item.slot"
+            :name="item.slot"
+            :record="record"
+          ></slot>
           <CustomFormItem
+            v-else
             :prefixClick="prefixClick"
             :suffixClick="suffixClick"
             :item="item"
+            :change="change"
           ></CustomFormItem>
         </a-col>
       </a-row>
@@ -92,6 +99,12 @@ export default {
     },
     // 内容后部区域点击如：input的suffix
     suffixClick: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
+    // 内容改动
+    change: {
       type: Function,
       required: false,
       default: () => {},
