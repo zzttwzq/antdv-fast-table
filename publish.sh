@@ -5,7 +5,7 @@
 # npm who am i
 
 # # 发布
-# npm publish
+npm publish
 if [ $? != 0 ]; then
     exit 0
 fi
