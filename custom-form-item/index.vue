@@ -18,23 +18,17 @@
       v-decorator="item.decorator"
       :placeholder="item.placeholder ? item.placeholder : '请输入'"
     >
-      <template
-        style="cursor: pointer"
-        v-if="item.prefixIcon || item.prefixText"
-        @click="prefixClick(item)"
-        slot="prefix"
-      >
-        <a-icon v-if="item.prefixIcon" :type="item.prefixIcon" />
-        <span v-if="item.prefixText">{{ item.prefixText }}</span>
+      <template v-if="item.prefixIcon || item.prefixText" slot="prefix"
+        ><div style="cursor: pointer" @click="prefixClick(item)">
+          <a-icon v-if="item.prefixIcon" :type="item.prefixIcon" />
+          <span v-if="item.prefixText">{{ item.prefixText }}</span>
+        </div>
       </template>
-      <template
-        style="cursor: pointer"
-        v-if="item.suffixIcon || item.suffixText"
-        @click="suffixClick(item)"
-        slot="suffix"
-      >
-        <a-icon v-if="item.suffixIcon" :type="item.suffixIcon" />
-        <span v-if="item.suffixText">{{ item.suffixText }}</span>
+      <template v-if="item.suffixIcon || item.suffixText" slot="suffix">
+        <div @click="suffixClick(item)" style="cursor: pointer">
+          <a-icon v-if="item.suffixIcon" :type="item.suffixIcon" />
+          <span v-if="item.suffixText">{{ item.suffixText }}</span>
+        </div>
       </template>
     </a-input>
 
@@ -65,16 +59,16 @@
     </a-input-number>
 
     <!-- 数字范围类型 -->
-    <div v-else-if="item.type == 'numberRange'">
+    <div class="flex-center" v-else-if="item.type == 'numberRange'">
       <a-input-number
-      style="width: 100%"
+        style="display: inline-block; width: 100%"
         v-decorator="item.decorator"
         :precision="item.precision ? Number(item.precision) : 0"
         :placeholder="item.placeholder ? item.placeholder : '请输入'"
       />
       &nbsp;<span>至</span>&nbsp;
       <a-input-number
-      style="width: 100%"
+        style="display: inline-block; width: 100%"
         v-decorator="item.decorator2"
         :precision="item.precision2 ? Number(item.precision2) : 0"
         :placeholder="item.placeholder2 ? item.placeholder2 : '请输入'"
@@ -193,4 +187,11 @@ export default {
   },
 };
 </script>
-<style lang="css"></style>
+<style lang="css">
+.flex-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+</style>
