@@ -6,7 +6,11 @@
         justify="start"
         align="middle"
         :key="index"
-        v-for="(li, index) in collape ? searchCollapeList : searchList"
+        v-for="(li, index) in !enableCollape
+          ? searchList
+          : collape
+          ? searchCollapeList
+          : searchList"
       >
         <a-col :span="1" :key="index * 10 + index2" :md="md" v-for="(item, index2) in li">
           <CustomFormItem
@@ -16,18 +20,22 @@
           ></CustomFormItem>
         </a-col>
       </a-row>
-      <div v-if="searchList.length > 0" :class="['button-back', alginMap[algin]]">
+      <div
+        style="width: 100%;"
+        v-if="searchList.length > 0"
+        :class="['button-back', alginMap[algin]]"
+      >
         <a-button @click="searchData" class="announce-button" type="primary">{{
           searchButtonText
         }}</a-button>
-        <div class="announce-button-space"></div>
+        <div class="button-space"></div>
         <a-button @click="clearSearch" class="announce-button">
           {{ clearButtonText }}</a-button
         >
-        <div class="announce-button-space"></div>
+        <div class="button-space"></div>
         <slot name="bottomButtons"></slot>
 
-        <div v-if="enableCollape" class="announce-button-space"></div>
+        <div v-if="enableCollape" class="button-space"></div>
         <div @click="clickCollape" v-if="enableCollape" class="show-button-back">
           <span class="name">{{ collape ? "显示" : "收起" }}</span>
           <a-icon style="margin-left: 5px" :type="collape ? 'down' : 'up'" />
@@ -78,7 +86,7 @@ export default {
     algin: {
       type: String,
       required: false,
-      default: "left",
+      default: "right",
     },
 
     //** functions */
@@ -233,5 +241,36 @@ export default {
 .show-button-back {
   // background: red;
   cursor: pointer;
+}
+.button-space {
+  width: 16px;
+  height: 10px;
+}
+.flex-row-left {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-row-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row-space {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-row-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>

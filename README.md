@@ -10,6 +10,8 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+# 1.1.0
+1. 修复simplesearch 默认值错误
 # 1.0.9
 1. 修改prefix无法点击bug
 # 1.0.8
