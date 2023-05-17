@@ -465,7 +465,7 @@ export default {
       }
 
       // 请求返回处理数据
-      if (data.data) {
+      if (data && data.data) {
         this.handelListData ? await this.handelListData(data.data) : null;
         this.dataSource = data.data;
       } else {
@@ -475,7 +475,7 @@ export default {
 
       this.pagination = {
         ...this.pagination,
-        total: data.total,
+        total: data ? data.total : 0,
       };
 
       this.loading = false;

@@ -113,10 +113,9 @@ export default {
   data() {
     return {
       list2: this.list,
-      form: this.$form.createForm(this),
+      form: null,
     };
   },
-  mounted() {},
   watch: {
     list(val) {
       this.list2 = val;
