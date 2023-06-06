@@ -3,47 +3,50 @@
 该组件是为了方便后台管理系统写列表增删改查功能而创建的；
 
 ## 组件API说明
-| 名称                       | 说明                                   | 类型                                                          | 是否必须 | 默认值 | 范例                              |
-| -------------------------- | -------------------------------------- | ------------------------------------------------------------- | -------- | ------ | --------------------------------- |
-| __属性(数据源)__           |                                        |                                                               |          |        |                                   |
-| *columns*                  | 表头数组                               | Array                                                         | true     | []     | 这个沿用antd或者elment的table表头 |
-| *searchList*               | 表头数组[^说明1]                       | Array                                                         | true     | []     | 搜索内容视图内容                  |
-| *formList*                 | 表头数组[^说明1]                       | Array                                                         | true     | []     | 新增和修改内容                    |
-| *title*                    | 页面的标题                             | String                                                        | false    |        | 如角色管理等                      |
-| __属性(页面功能)__         |                                        |                                                               |          |        |                                   |
-| *disableAddAction*         | 禁用自带的新增操作功能                 | Boolean                                                       | false    |        |                                   |
-| *disableDeleteAction*      | 禁用自带的删除操作功能                 | Boolean                                                       | false    |        |                                   |
-| *disableEditAction*        | 禁用自带的编辑操作功能                 | Boolean                                                       | false    |        |                                   |
-| *disableBackCardView*      | 禁用table底部的cardview                | Boolean                                                       | false    |        |                                   |  | *disablePagination* | 禁用table底部的Pagination | Boolean | false |  |  |
-| __属性(接口请求)[^说明2]__ |                                        |                                                               |          |        |                                   |
-| *listUrl*                  | 列表接口                               | String                                                        | false    |        |                                   |
-| *addUrl*                   | 新增接口                               | String                                                        | false    |        |                                   |
-| *editDetailUrl*            | 获取详情接口                           | String                                                        | false    |        |                                   |
-| *editUrl*                  | 修改接口                               | String                                                        | false    |        |                                   |
-| *deleteUrl*                | 删除接口                               | String                                                        | false    |        |                                   |
-| *listRequest*              | 列表接口                               | Object<Promise>                                               | false    |        |                                   |
-| *addRequest*               | 新增接口                               | Object<Promise>                                               | false    |        |                                   |
-| *editDetailRequest*        | 获取详情接口                           | Object<Promise>                                               | false    |        |                                   |
-| *editRequest*              | 修改接口                               | Object<Promise>                                               | false    |        |                                   |
-| *deleteRequest*            | 删除接口                               | Object<Promise>                                               | false    |        |                                   |
-| __回调__                   |                                        |                                                               |          |        |                                   |
-| *handelWillSearch*         | 处理即将搜索的数据                     | Function(search<Object>)                                      | false    |        |                                   |
-| *handelWillGetList*        | 处理即将调用请求接口                   | Function(params<Object>)                                      | false    |        |                                   |
-| *handelListData*           | 处理列表数据                           | Function(data<Array<Object>>)                                 | false    |        |                                   |
-| *handelWillAdd*            | 处理即将新增数据                       | Function()                                                    | false    |        |                                   |
-| *handelWillEdit*           | 处理即将点击修改按钮                   | Function(rowItem<Object>)                                     | false    |        |                                   |
-| *handelModifyData*         | 处理新增修改数据                       | Function(values<Object>)                                      | false    |        |                                   |
-| *handelAddResult*          | 处理新增返回结果                       | Function(status<Boolean>, res<Object>)                        | false    |        |                                   |
-| *handelEditResult*         | 处理修改返回结果                       | Function(status<Boolean>, res<Object>)                        | false    |        |                                   |
-| *handelWillDelete*         | 即将删除回调                           | Function(params<Object>)                                      | false    |        |                                   |
-| *handelDeleteResult*       | 删除返回结果                           | Function(status<Boolean>, res<Object>)                        | false    |        |                                   |
-| __方法__                   |                                        |                                                               |          |        |                                   |
-| *onExpand*                 | 扩展点击的时候                         | Function(expanded<Boolen>, rowItem<Object>)                   | false    |        |                                   |
-| *onChange*                 | pagination, filters or sorter 改变回调 | Function(pagination<Object>, filters<Object>, sorter<Object>) | false    |        |                                   |
-| __插槽(slot)__             |                                        |                                                               |          |        |                                   |
-| *buttons:data*             | 列表操作列自定义按钮                   |                                                               | false    |        | 会返回当前列的data                |
-| *topLeftButtons*           | 表格顶部左侧按钮                       |                                                               | false    |        |                                   |
-| *topRightButtons*          | 表格顶部右侧按钮                       |                                                               | false    |        |                                   |
+| 名称                       | 说明                                   | 类型                                                          | 是否必须 | 默认值   | 范例                              |
+| -------------------------- | -------------------------------------- | ------------------------------------------------------------- | -------- | -------- | --------------------------------- |
+| __属性(数据源)__           |                                        |                                                               |          |          |                                   |
+| *columns*                  | 表头数组                               | Array                                                         | true     | []       | 这个沿用antd或者elment的table表头 |
+| *searchList*               | 表头数组[^说明1]                       | Array                                                         | true     | []       | 搜索内容视图内容                  |
+| *formList*                 | 表头数组[^说明1]                       | Array                                                         | true     | []       | 新增和修改内容                    |
+| *title*                    | 页面的标题                             | String                                                        | false    |          | 如角色管理等                      |
+| __属性(页面功能)__         |                                        |                                                               |          |          |                                   |
+| *disableAddAction*         | 禁用自带的新增操作功能                 | Boolean                                                       | false    |          |                                   |
+| *disableDeleteAction*      | 禁用自带的删除操作功能                 | Boolean                                                       | false    |          |                                   |
+| *disableEditAction*        | 禁用自带的编辑操作功能                 | Boolean                                                       | false    |          |                                   |
+| *disableBackCardView*      | 禁用table底部的cardview                | Boolean                                                       | false    |          |                                   |  | *disablePagination* | 禁用table底部的Pagination | Boolean | false |  |  |
+| __属性(接口请求)[^说明2]__ |                                        |                                                               |          |          |                                   |
+| *pageNumKey*               | 分页page字段名称                       | String                                                        | false    | pageNum  |                                   |
+| *pageSizeKey*              | 分页size字段名称                       | String                                                        | false    | pageSize |                                   |
+| *pageStart*                | 分页起始值                             | Number                                                        | false    | 1        |                                   |
+| *listUrl*                  | 列表接口                               | String                                                        | false    |          |                                   |
+| *addUrl*                   | 新增接口                               | String                                                        | false    |          |                                   |
+| *editDetailUrl*            | 获取详情接口                           | String                                                        | false    |          |                                   |
+| *editUrl*                  | 修改接口                               | String                                                        | false    |          |                                   |
+| *deleteUrl*                | 删除接口                               | String                                                        | false    |          |                                   |
+| *listRequest*              | 列表接口                               | Object<Promise>                                               | false    |          |                                   |
+| *addRequest*               | 新增接口                               | Object<Promise>                                               | false    |          |                                   |
+| *editDetailRequest*        | 获取详情接口                           | Object<Promise>                                               | false    |          |                                   |
+| *editRequest*              | 修改接口                               | Object<Promise>                                               | false    |          |                                   |
+| *deleteRequest*            | 删除接口                               | Object<Promise>                                               | false    |          |                                   |
+| __回调__                   |                                        |                                                               |          |          |                                   |
+| *handelWillSearch*         | 处理即将搜索的数据                     | Function(search<Object>)                                      | false    |          |                                   |
+| *handelWillGetList*        | 处理即将调用请求接口                   | Function(params<Object>)                                      | false    |          |                                   |
+| *handelListData*           | 处理列表数据                           | Function(data<Array<Object>>)                                 | false    |          |                                   |
+| *handelWillAdd*            | 处理即将新增数据                       | Function()                                                    | false    |          |                                   |
+| *handelWillEdit*           | 处理即将点击修改按钮                   | Function(rowItem<Object>)                                     | false    |          |                                   |
+| *handelModifyData*         | 处理新增修改数据                       | Function(values<Object>)                                      | false    |          |                                   |
+| *handelAddResult*          | 处理新增返回结果                       | Function(status<Boolean>, res<Object>)                        | false    |          |                                   |
+| *handelEditResult*         | 处理修改返回结果                       | Function(status<Boolean>, res<Object>)                        | false    |          |                                   |
+| *handelWillDelete*         | 即将删除回调                           | Function(params<Object>)                                      | false    |          |                                   |
+| *handelDeleteResult*       | 删除返回结果                           | Function(status<Boolean>, res<Object>)                        | false    |          |                                   |
+| __方法__                   |                                        |                                                               |          |          |                                   |
+| *onExpand*                 | 扩展点击的时候                         | Function(expanded<Boolen>, rowItem<Object>)                   | false    |          |                                   |
+| *onChange*                 | pagination, filters or sorter 改变回调 | Function(pagination<Object>, filters<Object>, sorter<Object>) | false    |          |                                   |
+| __插槽(slot)__             |                                        |                                                               |          |          |                                   |
+| *buttons:data*             | 列表操作列自定义按钮                   |                                                               | false    |          | 会返回当前列的data                |
+| *topLeftButtons*           | 表格顶部左侧按钮                       |                                                               | false    |          |                                   |
+| *topRightButtons*          | 表格顶部右侧按钮                       |                                                               | false    |          |                                   |
 
 ---
 ### 用例
@@ -67,6 +70,9 @@
       :handelAddResult="handelAddResult"
       :handelEditResult="handelEditResult"
       :handelDeleteResult="handelDeleteResult"
+      pageNumKey="page"
+      pageSizeKey="size"
+      :pageStart="0"
     >
       <template v-slot:buttons="data">
         <a @click="yesRelevance(data.record)"> 账号关联 </a>
