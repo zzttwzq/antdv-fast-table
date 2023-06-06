@@ -335,11 +335,14 @@ export default {
 
       // 修改即将开始
       this.handelWillEdit ? await await this.handelWillEdit(this.editData) : null;
+      console.log(">>>editDetailRequest " + this.editData);
 
       this.isAdd = false;
       this.visible = true;
 
       this.$nextTick(() => {
+        console.log(">>>111 ", this.$refs.form.getForm());
+
         this.$refs.form.getForm().resetFields();
         this.$refs.form.getForm().setFieldsValue(this.editData);
       });
@@ -356,7 +359,6 @@ export default {
 
           // 增加或修改即将开始
           this.handelModifyData ? await this.handelModifyData(values) : null;
-          console.log(">>> values", values);
 
           if (this.isAdd) {
             try {
@@ -365,7 +367,6 @@ export default {
               this.addRequest
                 ? (data = await this.addRequest(values))
                 : (data = await this.$request(this.addUrl, "POST", values));
-              console.log(">>>> addRequest", data);
 
               // 新增结果返回
               this.handelAddResult
@@ -382,7 +383,6 @@ export default {
               this.editRequest
                 ? (data = await this.editRequest(values))
                 : (data = await this.$request(this.editUrl, "POST", values));
-              console.log(">>>> editRequest", data);
 
               // 修改请求返回
               this.handelEditResult
@@ -417,7 +417,6 @@ export default {
             this.deleteRequest
               ? (data = await this.deleteRequest(params))
               : (data = await this.$request(this.deleteUrl, "POST", params));
-            console.log(">>>> delRequest", data);
 
             // 请求删除返回结果
             self.handelDeleteResult
@@ -481,8 +480,6 @@ export default {
       // 即将开始请求列表接口
       this.handelWillGetList ? await this.handelWillGetList(params) : null;
 
-      console.log(">>> 666", this.listRequest);
-
       let data = "";
       if (this.listRequest) {
         data = await this.listRequest(params);
@@ -503,8 +500,6 @@ export default {
         ...this.pagination,
         total: data && data.total ? data.total : 0,
       };
-
-      console.log(">>> 777", this.pagination);
 
       this.loading = false;
     },

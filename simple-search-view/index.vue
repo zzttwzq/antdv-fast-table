@@ -201,12 +201,8 @@ export default {
     },
     // 搜索数据
     searchData() {
-      console.log(">>> 1111");
-
       this.form.validateFields((err, values) => {
-        console.log(">>> 2222");
         if (!err) {
-          console.log(">>> 333");
           this.$emit("searchData", values);
         }
       });

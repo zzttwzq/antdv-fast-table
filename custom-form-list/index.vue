@@ -22,11 +22,7 @@
           :key="index"
           v-for="(item, index) in list2"
         >
-          <slot
-            v-if="item.slot"
-            :name="item.slot"
-            :record="record"
-          ></slot>
+          <slot v-if="item.slot" :name="item.slot" :record="record"></slot>
           <CustomFormItem
             v-else
             :prefixClick="prefixClick"
@@ -113,7 +109,7 @@ export default {
   data() {
     return {
       list2: this.list,
-      form: null,
+      form: this.$form.createForm(this),
     };
   },
   watch: {
