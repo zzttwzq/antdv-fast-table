@@ -92,7 +92,7 @@ export default {
 
 ```
 
-[^说明1]: 组件类型:```text,textarea,select,number,numberRange,date,time,datetime,dateRange,select,radioGroup,checkboxGroup```
+[^说明1]: 组件类型:```text,textArea,select,number,numberRange,date,time,dateTime,dateRange,select,radioGroup,checkboxGroup```
 [^说明2]: 装饰器是通用的装饰器，与antd和element都保持一致；数组第一个是表单值名称，第二个是判断条件；
 [^说明3]: options是通用的数据，与antd和element都保持一致；{label|String, value|String,Number}；
 [^说明4]: justify：```start end center space-around space-between```

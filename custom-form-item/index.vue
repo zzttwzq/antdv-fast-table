@@ -34,7 +34,7 @@
 
     <!-- 长文本类型 -->
     <a-textarea
-      v-else-if="item.type == 'textarea'"
+      v-else-if="item.type == 'textArea'"
       placeholder="请输入"
       :auto-size="{
         minRows: item.minRows ? item.minRows : 3,
@@ -89,7 +89,7 @@
     <!-- 时间日期选择器 -->
     <a-date-picker
       style="width: 100%"
-      v-else-if="item.type == 'datetime'"
+      v-else-if="item.type == 'dateTime'"
       :showTime="item.showTime"
       :disabled-date="item.disabledDate ? item.disabledDate(item) : null"
       @change="item.dateChanged ? item.dateChanged : null"

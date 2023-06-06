@@ -10,6 +10,9 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+
+# 1.1.4
+1. custom-form-item datetime 改成 dateTime; textarea 改成 textArea;
 # 1.1.3
 1. custom-form-item 添加 datetime类型组件 
 # 1.1.2
