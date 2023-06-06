@@ -11,7 +11,11 @@
       :expandedRowRender="expandedRowRender"
       :scroll="scroll"
       @change="onChange"
-      @expand="(expanded, item) => { onExpand ? onExpand(expanded, item) : null; }"
+      @expand="
+        (expanded, item) => {
+          onExpand ? onExpand(expanded, item) : null;
+        }
+      "
       :rowSelection="
         selectedRows
           ? { selectedRowKeys: selectedRowKeys, onChange: updateSelect }

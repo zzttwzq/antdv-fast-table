@@ -10,6 +10,11 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+# 1.1.2
+1. 修复列表接口没有total 提示pagenation校验错误
+2. 添加pageNumKey 用于更改分页page对应的key
+3. 添加pageSizeKey 用于更改分页size对应的key
+3. 添加pageStart 用于更改分页起始页数
 # 1.1.1
 1. 修复列表接口报错后页面无法正常操作
 # 1.1.0

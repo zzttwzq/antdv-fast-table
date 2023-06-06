@@ -124,6 +124,23 @@ export default {
       default: false,
     },
 
+    ///========= 分页字段
+    pageNumKey: {
+      type: String,
+      required: false,
+      default: "pageNum",
+    },
+    pageSizeKey: {
+      type: String,
+      required: false,
+      default: "pageSize",
+    },
+    pageStart: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
+
     ///========= 接口请求
     listUrl: {
       type: String,
@@ -242,12 +259,18 @@ export default {
       /// 数据表
       loading: false,
       pagination: {
-        current: 1,
+        defaultPageSize: 10,
+        current: this.pageStart,
         pageSize: pageSize ? pageSize : 30,
         total: 0,
         showTotal: (total) => `共 ${total} 条记录`,
         showQuickJumper: true,
         showSizeChanger: true,
+        showSizeChanger: true,
+        hideOnSinglePage: true,
+        showLessItems: true,
+        showTotal: () => true,
+        size: "normal",
         pageSizeOptions: ["30", "40", "60", "80", "100"],
       },
       dataSource: [],
@@ -413,7 +436,7 @@ export default {
       this.search = e;
 
       // 即将开始搜索
-      this.handelWillSearch ? await this.handelWillSearch(e) : null
+      this.handelWillSearch ? await this.handelWillSearch(e) : null;
 
       this.pagination.page = "1";
       await this.getList();
@@ -421,7 +444,7 @@ export default {
     async clearSearch() {
       this.search = {};
       // 即将开始搜索
-      this.handelWillSearch ? await this.handelWillSearch({}) : null
+      this.handelWillSearch ? await this.handelWillSearch({}) : null;
 
       this.pagination.page = "1";
       await this.getList();
@@ -444,10 +467,11 @@ export default {
       this.loading = true;
 
       let params = {
-        pageNum: this.pagination.current,
-        pageSize: this.pagination.pageSize,
         ...this.search,
       };
+      params[this.pageNumKey] = this.pagination.current;
+      params[this.pageSizeKey] = this.pagination.pageSize;
+
       if (params.time && params.time.length > 1) {
         params.beginTime = params.time[0].unix();
         params.endTime = params.time[1].unix();
@@ -456,6 +480,8 @@ export default {
 
       // 即将开始请求列表接口
       this.handelWillGetList ? await this.handelWillGetList(params) : null;
+
+      console.log(">>> 666", this.listRequest);
 
       let data = "";
       if (this.listRequest) {
@@ -475,8 +501,10 @@ export default {
 
       this.pagination = {
         ...this.pagination,
-        total: data ? data.total : 0,
+        total: data && data.total ? data.total : 0,
       };
+
+      console.log(">>> 777", this.pagination);
 
       this.loading = false;
     },
