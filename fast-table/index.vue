@@ -313,7 +313,7 @@ export default {
     // 增加删除修改操作
     async add() {
       // 新增即将开始
-      this.handelWillAdd ? await await this.handelWillAdd() : null;
+      this.handelWillAdd ? await this.handelWillAdd() : null;
 
       this.isAdd = true;
       this.visible = true;
@@ -334,7 +334,7 @@ export default {
       }
 
       // 修改即将开始
-      this.handelWillEdit ? await await this.handelWillEdit(this.editData) : null;
+      this.handelWillEdit ? await this.handelWillEdit(this.editData) : null;
       console.log(">>>editDetailRequest " + this.editData);
 
       this.isAdd = false;
@@ -353,8 +353,18 @@ export default {
       this.$refs.form.getForm().validateFields(async (err, values) => {
         if (!err) {
           /// 判断如果是修改就添加id字段
-          if (!this.isAdd) {
+          if (!this.isAdd && values.id == "") {
             values.id = this.editData.id;
+          }
+
+          if (values["createAt"] != null && typeof values["createAt"] == "object") {
+            values["createAt"] = values["createAt"].valueOf();
+          }
+          if (values["updateAt"] != null && typeof values["updateAt"] == "object") {
+            values["updateAt"] = values["updateAt"].valueOf();
+          }
+          if (values["deleteAt"] != null && typeof values["deleteAt"] == "object") {
+            values["deleteAt"] = values["deleteAt"].valueOf();
           }
 
           // 增加或修改即将开始
@@ -403,7 +413,6 @@ export default {
       this.$confirm({
         title: "提示",
         content: "是否确认删除？",
-        okText: "确认",
         cancelText: "取消",
         async onOk() {
           try {

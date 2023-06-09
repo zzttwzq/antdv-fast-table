@@ -86,17 +86,6 @@
       :placeholder="item.placeholder ? item.placeholder : '请输入'"
     />
 
-    <!-- 时间日期选择器 -->
-    <a-date-picker
-      style="width: 100%"
-      v-else-if="item.type == 'dateTime'"
-      :showTime="item.showTime"
-      :disabled-date="item.disabledDate ? item.disabledDate(item) : null"
-      @change="item.dateChanged ? item.dateChanged : null"
-      v-decorator="item.decorator"
-      :placeholder="item.placeholder ? item.placeholder : '请输入'"
-    />
-
     <!-- 时间日期范围选择器 -->
     <a-range-picker
       style="width: 100%"

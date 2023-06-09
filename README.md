@@ -10,7 +10,8 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
-
+# 1.1.5
+1. custom-form-item 取消 dateTime; 如果需要时间可以添加 showTime 属性即可
 # 1.1.4
 1. custom-form-item datetime 改成 dateTime; textarea 改成 textArea;
 # 1.1.3
@@ -19,7 +20,7 @@
 1. fast-table 修复列表接口没有total 提示pagenation校验错误
 2. fast-table 添加pageNumKey 用于更改分页page对应的key
 3. fast-table 添加pageSizeKey 用于更改分页size对应的key
-3. fast-table 添加pageStart 用于更改分页起始页数
+4. fast-table 添加pageStart 用于更改分页起始页数
 # 1.1.1
 1. 修复列表接口报错后页面无法正常操作
 # 1.1.0
