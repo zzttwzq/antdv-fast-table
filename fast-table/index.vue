@@ -19,13 +19,13 @@
           <slot name="topRightButtons"></slot>
         </a-space>
         <StandardTable
-          rowKey="id"
           :loading="loading"
           :columns="columns2"
           :dataSource="dataSource"
           :pagination="disablePagination ? null : pagination"
           @change="change"
           :onExpand="onExpand"
+          :scroll="{ x: tableWidth, y: tableHeight }"
         >
           <div slot="description" slot-scope="{ text }">
             {{ text }}
@@ -68,6 +68,10 @@ pageSize = Number(pageSize);
 export default {
   name: "FastTable",
   props: {
+    // 表行标记
+    rowKey: {
+      type: String | Number,
+    },
     ///========= 数据源
     // 表头
     columns: {
@@ -253,6 +257,14 @@ export default {
       type: Function,
       required: false,
     },
+    tableWidth: {
+      type: Number,
+      default: 0,
+    },
+    talbeHeight: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -297,6 +309,12 @@ export default {
   },
   mounted() {
     this.getList();
+
+    this.tableWidth = 0;
+    this.columns.map((it) => {
+      this.tableWidth += it["width"] != null ? it["width"] : 100;
+    });
+    // console.log(">>> x", this.x);
   },
   methods: {
     // ============= 其他方法

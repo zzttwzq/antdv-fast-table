@@ -10,6 +10,8 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+# 1.1.6
+1. fast-table 添加 tableWidth:表格内容宽度(默认按照columns数据自动计算)；tableHeight:表格内容高度 (默认0, 不设置高度，没有滚动条)
 # 1.1.5
 1. custom-form-item 取消 dateTime; 如果需要时间可以添加 showTime 属性即可
 # 1.1.4
