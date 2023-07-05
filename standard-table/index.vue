@@ -6,7 +6,6 @@
       :columns="columns"
       :dataSource="dataSource"
       :pagination="pagination ? pagination : false"
-      :rowKey="rowKey"
       :expandedRowKeys="expandedRowKeys"
       :expandedRowRender="expandedRowRender"
       :scroll="scroll"
@@ -18,7 +17,10 @@
       "
       :rowSelection="
         selectedRows
-          ? { selectedRowKeys: selectedRowKeys, onChange: updateSelect }
+          ? {
+              selectedRowKeys: selectedRowKeys,
+              onChange: updateSelect,
+            }
           : undefined
       "
     >
@@ -99,6 +101,7 @@ export default {
     },
   },
   created() {
+    // console.log(">>>rowKey ", this.rowKey);
     this.needTotalList = this.initTotalList(this.columns);
   },
   watch: {

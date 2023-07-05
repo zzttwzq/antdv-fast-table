@@ -19,13 +19,14 @@
           <slot name="topRightButtons"></slot>
         </a-space>
         <StandardTable
+          :rowKey="rowKey"
           :loading="loading"
           :columns="columns2"
           :dataSource="dataSource"
           :pagination="disablePagination ? null : pagination"
           @change="change"
           :onExpand="onExpand"
-          :scroll="{ x: tableWidth, y: tableHeight }"
+          :scroll="{ x: tableWidth2, y: tableHeight2 }"
         >
           <div slot="description" slot-scope="{ text }">
             {{ text }}
@@ -261,7 +262,7 @@ export default {
       type: Number,
       default: 0,
     },
-    talbeHeight: {
+    tableHeight: {
       type: Number,
       default: 0,
     },
@@ -270,6 +271,8 @@ export default {
     return {
       /// 数据表
       loading: false,
+      tableWidth2: this.tableWidth,
+      tableHeight2: this.tableHeight,
       pagination: {
         defaultPageSize: 10,
         current: this.pageStart,
@@ -300,6 +303,12 @@ export default {
     columns(val) {
       this.columns2 = val;
     },
+    tableWidth(val) {
+      this.tableWidth2 = val;
+    },
+    tableHeight(val) {
+      this.tableHeight2 = val;
+    },
     searchList(val) {
       this.searchList2 = val;
     },
@@ -310,9 +319,9 @@ export default {
   mounted() {
     this.getList();
 
-    this.tableWidth = 0;
+    this.tableWidth2 = 0;
     this.columns.map((it) => {
-      this.tableWidth += it["width"] != null ? it["width"] : 100;
+      this.tableWidth2 += it["width"] != null ? it["width"] : 100;
     });
     // console.log(">>> x", this.x);
   },
