@@ -10,6 +10,8 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+# 1.1.8
+1. fast-table 修复删除无法调用接口
 # 1.1.7
 1. fast-table 修复若干bug
 # 1.1.6

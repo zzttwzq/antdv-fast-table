@@ -362,13 +362,13 @@ export default {
 
       // 修改即将开始
       this.handelWillEdit ? await this.handelWillEdit(this.editData) : null;
-      console.log(">>>editDetailRequest " + this.editData);
+      // console.log(">>>editDetailRequest " + this.editData);
 
       this.isAdd = false;
       this.visible = true;
 
       this.$nextTick(() => {
-        console.log(">>>111 ", this.$refs.form.getForm());
+        // console.log(">>>111 ", this.$refs.form.getForm());
 
         this.$refs.form.getForm().resetFields();
         this.$refs.form.getForm().setFieldsValue(this.editData);
@@ -426,6 +426,8 @@ export default {
                 ? await this.handelEditResult(true, data)
                 : await this.getList();
             } catch (error) {
+              console.log(">>>error editRequest", error);
+
               // 修改失败返回
               this.handelEditResult ? await this.handelEditResult(false, error) : "";
             }
@@ -445,20 +447,21 @@ export default {
           try {
             // 请求即将开始
             let params = {};
-            params = [e];
-            this.handelWillDelete ? await this.handelWillDelete(params) : null;
+            params = e;
+            self.handelWillDelete ? await self.handelWillDelete(params) : null;
 
             // 请求删除数据
             let data = "";
-            this.deleteRequest
-              ? (data = await this.deleteRequest(params))
-              : (data = await this.$request(this.deleteUrl, "POST", params));
+            self.deleteRequest
+              ? (data = await self.deleteRequest(params))
+              : (data = await self.$request(self.deleteUrl, "POST", params));
 
             // 请求删除返回结果
-            self.handelDeleteResult
+            self.handelAddResult
               ? await self.handelDeleteResult(true, data)
               : await self.getList();
           } catch (error) {
+            console.log(">>>error deleteRequest", error);
             self.handelDeleteResult ? await self.handelDeleteResult(false, error) : "";
           }
         },
@@ -485,9 +488,9 @@ export default {
       await this.getList();
     },
     async change(pagination, filters, sorter) {
-      console.log(pagination);
-      console.log(filters);
-      console.log(sorter);
+      // console.log(pagination);
+      // console.log(filters);
+      // console.log(sorter);
       this.pagination.current = pagination.current;
 
       localStorage.setItem("pageSize", pagination.pageSize);
