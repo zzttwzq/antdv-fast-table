@@ -47,6 +47,7 @@
 | *buttons:data*             | 列表操作列自定义按钮                   |                                                               | false    |          | 会返回当前列的data                |
 | *topLeftButtons*           | 表格顶部左侧按钮                       |                                                               | false    |          |                                   |
 | *topRightButtons*          | 表格顶部右侧按钮                       |                                                               | false    |          |                                   |
+| *custEditModel*            | 自定义表格增加修改的model内容          |                                                               | false    |          |                                   |
 
 ---
 ### 用例

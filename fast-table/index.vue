@@ -49,13 +49,16 @@
       cancel-text="取消"
       :loading="loading"
       @ok="submit"
+      :width="custEditModelWidth"
     >
+      <slot v-if="custEditModel" name="custEditModel"></slot>
       <CustomFormList
         :prefixClick="prefixClick"
         :suffixClick="suffixClick"
         ref="form"
         :list="formList2"
         :showBtns="false"
+        v-else
       ></CustomFormList>
     </a-modal>
   </div>
@@ -98,6 +101,16 @@ export default {
       default: "",
     },
     ///========= 页面功能
+    custEditModel: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    custEditModelWidth: {
+      type: Number,
+      required: false,
+      default: 500,
+    },
     // 禁用自带的删除操作功能
     disableDeleteAction: {
       type: Boolean,
@@ -345,7 +358,7 @@ export default {
       this.isAdd = true;
       this.visible = true;
       this.$nextTick(() => {
-        this.$refs.form.getForm().resetFields();
+        this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
       });
     },
     async edit(e) {
@@ -362,20 +375,28 @@ export default {
 
       // 修改即将开始
       this.handelWillEdit ? await this.handelWillEdit(this.editData) : null;
-      // console.log(">>>editDetailRequest " + this.editData);
 
       this.isAdd = false;
       this.visible = true;
 
       this.$nextTick(() => {
-        // console.log(">>>111 ", this.$refs.form.getForm());
-
-        this.$refs.form.getForm().resetFields();
-        this.$refs.form.getForm().setFieldsValue(this.editData);
+        this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
+        this.$refs.form ? this.$refs.form.getForm().setFieldsValue(this.editData) : null;
       });
     },
-    submit(e) {
+    async submit(e) {
       e.preventDefault();
+
+      // 使用自己的customform
+      if (this.$refs.form == null) {
+        if (this.isAdd) {
+          this.handelModifyData ? await this.handelModifyData({ isAdd: true }) : null;
+        } else {
+          this.handelModifyData ? await this.handelModifyData({ isAdd: false }) : null;
+        }
+        this.visible = false;
+        return;
+      }
 
       this.$refs.form.getForm().validateFields(async (err, values) => {
         if (!err) {
