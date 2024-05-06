@@ -19,13 +19,14 @@
           <slot name="topRightButtons"></slot>
         </a-space>
         <StandardTable
-          rowKey="id"
+          :rowKey="rowKey"
           :loading="loading"
           :columns="columns2"
           :dataSource="dataSource"
           :pagination="disablePagination ? null : pagination"
           @change="change"
           :onExpand="onExpand"
+          :scroll="{ x: tableWidth2, y: tableHeight2 }"
         >
           <div slot="description" slot-scope="{ text }">
             {{ text }}
@@ -48,13 +49,16 @@
       cancel-text="取消"
       :loading="loading"
       @ok="submit"
+      :width="custEditModelWidth"
     >
+      <slot v-if="custEditModel" name="custEditModel"></slot>
       <CustomFormList
         :prefixClick="prefixClick"
         :suffixClick="suffixClick"
         ref="form"
         :list="formList2"
         :showBtns="false"
+        v-else
       ></CustomFormList>
     </a-modal>
   </div>
@@ -68,6 +72,10 @@ pageSize = Number(pageSize);
 export default {
   name: "FastTable",
   props: {
+    // 表行标记
+    rowKey: {
+      type: String | Number,
+    },
     ///========= 数据源
     // 表头
     columns: {
@@ -93,6 +101,16 @@ export default {
       default: "",
     },
     ///========= 页面功能
+    custEditModel: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    custEditModelWidth: {
+      type: Number,
+      required: false,
+      default: 500,
+    },
     // 禁用自带的删除操作功能
     disableDeleteAction: {
       type: Boolean,
@@ -253,11 +271,21 @@ export default {
       type: Function,
       required: false,
     },
+    tableWidth: {
+      type: Number,
+      default: 0,
+    },
+    tableHeight: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       /// 数据表
       loading: false,
+      tableWidth2: this.tableWidth,
+      tableHeight2: this.tableHeight,
       pagination: {
         defaultPageSize: 10,
         current: this.pageStart,
@@ -288,6 +316,12 @@ export default {
     columns(val) {
       this.columns2 = val;
     },
+    tableWidth(val) {
+      this.tableWidth2 = val;
+    },
+    tableHeight(val) {
+      this.tableHeight2 = val;
+    },
     searchList(val) {
       this.searchList2 = val;
     },
@@ -297,6 +331,12 @@ export default {
   },
   mounted() {
     this.getList();
+
+    this.tableWidth2 = 0;
+    this.columns.map((it) => {
+      this.tableWidth2 += it["width"] != null ? it["width"] : 100;
+    });
+    // console.log(">>> x", this.x);
   },
   methods: {
     // ============= 其他方法
@@ -313,12 +353,12 @@ export default {
     // 增加删除修改操作
     async add() {
       // 新增即将开始
-      this.handelWillAdd ? await await this.handelWillAdd() : null;
+      this.handelWillAdd ? await this.handelWillAdd() : null;
 
       this.isAdd = true;
       this.visible = true;
       this.$nextTick(() => {
-        this.$refs.form.getForm().resetFields();
+        this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
       });
     },
     async edit(e) {
@@ -334,29 +374,49 @@ export default {
       }
 
       // 修改即将开始
-      this.handelWillEdit ? await await this.handelWillEdit(this.editData) : null;
+      this.handelWillEdit ? await this.handelWillEdit(this.editData) : null;
 
       this.isAdd = false;
       this.visible = true;
 
       this.$nextTick(() => {
-        this.$refs.form.getForm().resetFields();
-        this.$refs.form.getForm().setFieldsValue(this.editData);
+        this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
+        this.$refs.form ? this.$refs.form.getForm().setFieldsValue(this.editData) : null;
       });
     },
-    submit(e) {
+    async submit(e) {
       e.preventDefault();
+
+      // 使用自己的customform
+      if (this.$refs.form == null) {
+        if (this.isAdd) {
+          this.handelModifyData ? await this.handelModifyData({ isAdd: true }) : null;
+        } else {
+          this.handelModifyData ? await this.handelModifyData({ isAdd: false }) : null;
+        }
+        this.visible = false;
+        return;
+      }
 
       this.$refs.form.getForm().validateFields(async (err, values) => {
         if (!err) {
           /// 判断如果是修改就添加id字段
-          if (!this.isAdd) {
+          if (!this.isAdd && values.id == "") {
             values.id = this.editData.id;
+          }
+
+          if (values["createAt"] != null && typeof values["createAt"] == "object") {
+            values["createAt"] = values["createAt"].valueOf();
+          }
+          if (values["updateAt"] != null && typeof values["updateAt"] == "object") {
+            values["updateAt"] = values["updateAt"].valueOf();
+          }
+          if (values["deleteAt"] != null && typeof values["deleteAt"] == "object") {
+            values["deleteAt"] = values["deleteAt"].valueOf();
           }
 
           // 增加或修改即将开始
           this.handelModifyData ? await this.handelModifyData(values) : null;
-          console.log(">>> values", values);
 
           if (this.isAdd) {
             try {
@@ -365,7 +425,6 @@ export default {
               this.addRequest
                 ? (data = await this.addRequest(values))
                 : (data = await this.$request(this.addUrl, "POST", values));
-              console.log(">>>> addRequest", data);
 
               // 新增结果返回
               this.handelAddResult
@@ -382,13 +441,14 @@ export default {
               this.editRequest
                 ? (data = await this.editRequest(values))
                 : (data = await this.$request(this.editUrl, "POST", values));
-              console.log(">>>> editRequest", data);
 
               // 修改请求返回
               this.handelEditResult
                 ? await this.handelEditResult(true, data)
                 : await this.getList();
             } catch (error) {
+              console.log(">>>error editRequest", error);
+
               // 修改失败返回
               this.handelEditResult ? await this.handelEditResult(false, error) : "";
             }
@@ -403,27 +463,26 @@ export default {
       this.$confirm({
         title: "提示",
         content: "是否确认删除？",
-        okText: "确认",
         cancelText: "取消",
         async onOk() {
           try {
             // 请求即将开始
             let params = {};
-            params = [e];
-            this.handelWillDelete ? await this.handelWillDelete(params) : null;
+            params = e;
+            self.handelWillDelete ? await self.handelWillDelete(params) : null;
 
             // 请求删除数据
             let data = "";
-            this.deleteRequest
-              ? (data = await this.deleteRequest(params))
-              : (data = await this.$request(this.deleteUrl, "POST", params));
-            console.log(">>>> delRequest", data);
+            self.deleteRequest
+              ? (data = await self.deleteRequest(params))
+              : (data = await self.$request(self.deleteUrl, "POST", params));
 
             // 请求删除返回结果
-            self.handelDeleteResult
+            self.handelAddResult
               ? await self.handelDeleteResult(true, data)
               : await self.getList();
           } catch (error) {
+            console.log(">>>error deleteRequest", error);
             self.handelDeleteResult ? await self.handelDeleteResult(false, error) : "";
           }
         },
@@ -450,9 +509,9 @@ export default {
       await this.getList();
     },
     async change(pagination, filters, sorter) {
-      console.log(pagination);
-      console.log(filters);
-      console.log(sorter);
+      // console.log(pagination);
+      // console.log(filters);
+      // console.log(sorter);
       this.pagination.current = pagination.current;
 
       localStorage.setItem("pageSize", pagination.pageSize);
@@ -481,8 +540,6 @@ export default {
       // 即将开始请求列表接口
       this.handelWillGetList ? await this.handelWillGetList(params) : null;
 
-      console.log(">>> 666", this.listRequest);
-
       let data = "";
       if (this.listRequest) {
         data = await this.listRequest(params);
@@ -503,8 +560,6 @@ export default {
         ...this.pagination,
         total: data && data.total ? data.total : 0,
       };
-
-      console.log(">>> 777", this.pagination);
 
       this.loading = false;
     },

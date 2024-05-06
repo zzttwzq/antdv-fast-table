@@ -3,23 +3,23 @@
 该组件是为了方便后台管理系统写增加和修改的表单提交型内容而创建的；会根据参数返回组件列表；
 
 ## 组件API说明
-| 名称               | 说明                 | 类型                                | 是否必须 | 默认值 | 范例                               |
-| ------------------ | -------------------- | ----------------------------------- | -------- | ------ | ---------------------------------- |
-| __属性(数据源)__   |                      |                                     |          |        |
-| *list*             | 表头数组[^说明1]     | Array                               | true     | []     | 这个沿用antd或者elment的table表头  |
-| __属性(页面功能)__ |                      |                                     |          |        |                                    |
-| *showBtns*         | 是否显示提交取消按钮 | Boolean                             | false    | true   |                                    |  |
-| __方法__           |                      |                                     |          |        |                                    |
-| *prefixClick*      | 输入框前部点击       | Function(<item>) | false    |        |                                    |
-| *suffixClick*      | 输入框后部点击       | Function(<item>) | false    |        |                                    |
-| *submitClick*      | 提交按钮点击         | Function(<提交的数据>)              | false    |        |                                    |
-| *cancelClick*      | 取消按钮点击         | Function()                          | false    |        |                                    |
-| __内部方法__       |                      |                                     |          |        |                                    |
-| *getForm*          | 获取form表单         | Object Function()                   | false    |        |                                    |
-| *setFormValues*    | 设置form数据         | Function(<表单中的数据map>)         | false    |        | 必须要在form中才能设置，不然会报错 |
-| *getFormValues*    | 获取form数据         | Map<String, any> Function()         | false    |        |                                    |
-| __插槽(slot)__     |                      |                                     |          |        |                                    |
-| *customButtons*    | 列表操作列自定义按钮 |                                     | false    |        | 会返回当前列的data                 |
+| 名称               | 说明                 | 类型                        | 是否必须 | 默认值 | 范例                               |
+| ------------------ | -------------------- | --------------------------- | -------- | ------ | ---------------------------------- |
+| __属性(数据源)__   |                      |                             |          |        |
+| *list*             | 表头数组[^说明1]     | Array                       | true     | []     | 这个沿用antd或者elment的table表头  |
+| __属性(页面功能)__ |                      |                             |          |        |                                    |
+| *showBtns*         | 是否显示提交取消按钮 | Boolean                     | false    | true   |                                    |  |
+| __方法__           |                      |                             |          |        |                                    |
+| *prefixClick*      | 输入框前部点击       | Function(<item>)            | false    |        |                                    |
+| *suffixClick*      | 输入框后部点击       | Function(<item>)            | false    |        |                                    |
+| *submitClick*      | 提交按钮点击         | Function(<提交的数据>)      | false    |        |                                    |
+| *cancelClick*      | 取消按钮点击         | Function()                  | false    |        |                                    |
+| __内部方法__       |                      |                             |          |        |                                    |
+| *getForm*          | 获取form表单         | Object Function()           | false    |        |                                    |
+| *setFormValues*    | 设置form数据         | Function(<表单中的数据map>) | false    |        | 必须要在form中才能设置，不然会报错 |
+| *getFormValues*    | 获取form数据         | Map<String, any> Function() | false    |        |                                    |
+| __插槽(slot)__     |                      |                             |          |        |                                    |
+| *customButtons*    | 列表操作列自定义按钮 |                             | false    |        | 会返回当前列的data                 |
 
 ---
 ### 用例
