@@ -1,6 +1,6 @@
 <template>
   <a-form-item
-    :label="item.name"
+    :label="item.title"
     :labelCol="{
       span: item.formLabelWidth ? item.formLabelWidth : 6,
       offset: item.formLabelOffset ? item.formLabelOffset : 0,
