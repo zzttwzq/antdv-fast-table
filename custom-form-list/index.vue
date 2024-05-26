@@ -138,13 +138,27 @@ export default {
     getForm() {
       return this.form;
     },
+    // 重置数据
+    resetForm() {
+      return this.form.resetFields();
+    },
+    // 获取form数据
+    async getFormValues() {
+     return await this.form.validateFields();
+    },
     // 设置form数据
     setFormValues(formValues) {
       return this.form.setFieldsValue(formValues);
     },
-    // 获取form数据
-    getFormValues(formValues) {
-      return this.form.setFieldsValue(formValues);
+    // 验证表单
+    validateForm(callback) {
+      this.form.validateFields((err, values) => {
+        callback(err, values);
+      });
+    },
+    // 移动到对应的表单
+    scrollToField(name) {
+      this.form.scrollToField(name);
     },
   },
 };

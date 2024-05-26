@@ -2,13 +2,8 @@
   <div>
     <a-card :title="title">
       <div>
-        <SimpleSearchView
-          :list="searchList2"
-          @searchData="searchData"
-          @clearSearch="clearSearch"
-          v-if="searchList2.length"
-          ref="search"
-        ></SimpleSearchView>
+        <SimpleSearchView :list="searchList2" @searchData="searchData" @clearSearch="clearSearch"
+          v-if="searchList2.length" ref="search"></SimpleSearchView>
       </div>
       <div>
         <a-space class="operator">
@@ -18,16 +13,9 @@
           </div>
           <slot name="topRightButtons"></slot>
         </a-space>
-        <StandardTable
-          :rowKey="rowKey"
-          :loading="loading"
-          :columns="columns2"
-          :dataSource="dataSource"
-          :pagination="disablePagination ? null : pagination"
-          @change="change"
-          :onExpand="onExpand"
-          :scroll="{ x: tableWidth2, y: tableHeight2 }"
-        >
+        <StandardTable :loading="loading" :columns="columns2" :dataSource="dataSource"
+          :pagination="disablePagination ? null : pagination" @change="change" :onExpand="onExpand"
+          :scroll="{ x: tableWidth2, y: tableHeight2 }">
           <div slot="description" slot-scope="{ text }">
             {{ text }}
           </div>
@@ -42,24 +30,11 @@
       </div>
     </a-card>
     <!-- 角色添加和修改 -->
-    <a-modal
-      v-model="visible"
-      :title="isAdd ? '新增' : '修改'"
-      :ok-text="isAdd ? '新增' : '修改'"
-      cancel-text="取消"
-      :loading="loading"
-      @ok="submit"
-      :width="custEditModelWidth"
-    >
+    <a-modal v-model="visible" :title="isAdd ? '新增' : '修改'" :ok-text="isAdd ? '新增' : '修改'" cancel-text="取消"
+      :loading="loading" @ok="submit" @cancel="cancel" :width="custEditModelWidth">
       <slot v-if="custEditModel" name="custEditModel"></slot>
-      <CustomFormList
-        :prefixClick="prefixClick"
-        :suffixClick="suffixClick"
-        ref="form"
-        :list="formList2"
-        :showBtns="false"
-        v-else
-      ></CustomFormList>
+      <CustomFormList :prefixClick="prefixClick" :suffixClick="suffixClick" ref="form" :list="formList2"
+        :showBtns="false" v-else></CustomFormList>
     </a-modal>
   </div>
 </template>
@@ -73,9 +48,11 @@ export default {
   name: "FastTable",
   props: {
     // 表行标记
-    rowKey: {
-      type: String | Number,
-    },
+    // rowKey: {
+    //   type: String | Number,
+    //   required: false,
+    //   default: "key",
+    // },
     ///========= 数据源
     // 表头
     columns: {
@@ -141,6 +118,18 @@ export default {
       required: false,
       default: false,
     },
+    // 提交按钮点击
+    submitClick: {
+      type: Function,
+      required: false,
+      default: undefined
+    },
+    // 取消按钮点击
+    cancelClick: {
+      type: Function,
+      required: false,
+      default: undefined,
+    },
 
     ///========= 分页字段
     pageNumKey: {
@@ -189,7 +178,7 @@ export default {
     listRequest: {
       type: Function,
       required: false,
-      default: () => {},
+      default: () => { },
     },
     addRequest: {
       type: Function,
@@ -222,52 +211,52 @@ export default {
 
     ///========= 回调
     // 处理新增修改数据 Function(<修改后的数据>)
-    handelWillSearch: {
+    handleWillSearch: {
       type: Function,
       required: false,
     },
     // 处理即将调用请求接口 Function(<params参数>)
-    handelWillGetList: {
+    handleWillGetList: {
       type: Function,
       required: false,
     },
     // 处理列表数据
-    handelListData: {
+    handleListData: {
       type: Function,
       required: false,
     },
     // 处理新增修改数据 Function()
-    handelWillAdd: {
+    handleWillAdd: {
       type: Function,
       required: false,
     },
     // 处理即将点击修改按钮 Function(<修改前的数据>)
-    handelWillEdit: {
+    handleWillEdit: {
       type: Function,
       required: false,
     },
     // 处理新增修改数据 Function(<修改后的数据>)
-    handelModifyData: {
+    handleModifyData: {
       type: Function,
       required: false,
     },
     // 处理新增返回结果 Function(<请求成功状态>, <请返回结果>)
-    handelAddResult: {
+    handleAddResult: {
       type: Function,
       required: false,
     },
     // 处理修改返回结果 Function(<请求成功状态>, <请返回结果>)
-    handelEditResult: {
+    handleEditResult: {
       type: Function,
       required: false,
     },
     // 处理即将删除操作 Function(params<Object>)
-    handelWillDelete: {
+    handleWillDelete: {
       type: Function,
       required: false,
     },
     // 处理删除返回结果 Function(<请求成功状态>, <请返回结果>)
-    handelDeleteResult: {
+    handleDeleteResult: {
       type: Function,
       required: false,
     },
@@ -294,10 +283,8 @@ export default {
         showTotal: (total) => `共 ${total} 条记录`,
         showQuickJumper: true,
         showSizeChanger: true,
-        showSizeChanger: true,
         hideOnSinglePage: true,
         showLessItems: true,
-        showTotal: () => true,
         size: "normal",
         pageSizeOptions: ["30", "40", "60", "80", "100"],
       },
@@ -342,26 +329,45 @@ export default {
     // ============= 其他方法
     // 设置搜索数据
     setSearchValues(formValues) {
-      this.$refs.search.getForm().setFieldsValue(formValues);
+      this.$refs.search.setFormValues(formValues);
     },
     // 设置表单数据
     setFormValues(formValues) {
-      this.$refs.form.getForm().setFieldsValue(formValues);
+      this.$refs.form.setFormValues(formValues);
+    },
+
+    cancel(e) {
+      e.preventDefault();
+      if (this.cancelClick) {
+        this.cancelClick()
+        return;
+      }
+
+      this.visible = false;
+      this.isAdd = false;
     },
 
     // ============= 增加，修改，删除方法
     // 增加删除修改操作
     async add() {
-      // 新增即将开始
-      this.handelWillAdd ? await this.handelWillAdd() : null;
-
+      // 先显示页面
       this.isAdd = true;
       this.visible = true;
-      this.$nextTick(() => {
-        this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
+
+      this.$nextTick(async () => {
+        // 新增即将开始
+        this.handleWillAdd ? await this.handleWillAdd() : null;
+        this.$refs.form ? this.$refs.form.resetForm() : null;
       });
     },
     async edit(e) {
+      // 先显示页面
+      this.isAdd = false;
+      this.visible = true;
+
+      // 修改即将开始
+      this.handleWillEdit ? this.handleWillEdit(this.editData) : null;
+
       if (this.editDetailRequest) {
         let detail = await this.editDetailRequest(e.id);
         this.editData = detail;
@@ -373,37 +379,34 @@ export default {
         this.editData.tag_id = Number(this.editData.tag_id);
       }
 
-      // 修改即将开始
-      this.handelWillEdit ? await this.handelWillEdit(this.editData) : null;
-
-      this.isAdd = false;
-      this.visible = true;
-
       this.$nextTick(() => {
-        this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
-        this.$refs.form ? this.$refs.form.getForm().setFieldsValue(this.editData) : null;
+        this.$refs.form.setFormValues(this.editData);
       });
     },
     async submit(e) {
       e.preventDefault();
-
-      // 使用自己的customform
-      if (this.$refs.form == null) {
-        if (this.isAdd) {
-          this.handelModifyData ? await this.handelModifyData({ isAdd: true }) : null;
-        } else {
-          this.handelModifyData ? await this.handelModifyData({ isAdd: false }) : null;
-        }
-        this.visible = false;
+      if (this.submitClick) {
+        this.submitClick()
         return;
       }
 
-      this.$refs.form.getForm().validateFields(async (err, values) => {
+      // 使用自己的customform
+      if (this.$refs.form == null) {
+        this.handleModifyData ? await this.handleModifyData({ isAdd: this.isAdd }) : null;
+        this.visible = false;
+        console.log('>>>>>123123');
+        return;
+      }
+
+      this.$refs.form.validateForm(async (err, values) => {
         if (!err) {
           /// 判断如果是修改就添加id字段
-          if (!this.isAdd && values.id == "") {
+          if (this.isAdd == false) {
             values.id = this.editData.id;
           }
+
+          console.log(">>>>>> ", this.editData)
+          console.log(">>>>>> ", values.id)
 
           if (values["createAt"] != null && typeof values["createAt"] == "object") {
             values["createAt"] = values["createAt"].valueOf();
@@ -416,7 +419,7 @@ export default {
           }
 
           // 增加或修改即将开始
-          this.handelModifyData ? await this.handelModifyData(values) : null;
+          this.handleModifyData ? await this.handleModifyData(values) : null;
 
           if (this.isAdd) {
             try {
@@ -427,12 +430,12 @@ export default {
                 : (data = await this.$request(this.addUrl, "POST", values));
 
               // 新增结果返回
-              this.handelAddResult
-                ? await this.handelAddResult(true, data)
+              this.handleAddResult
+                ? await this.handleAddResult(true, data)
                 : await this.getList();
             } catch (error) {
               // 新增失败返回
-              this.handelAddResult ? await this.handelAddResult(false, error) : "";
+              this.handleAddResult ? await this.handleAddResult(false, error) : "";
             }
           } else {
             try {
@@ -443,14 +446,14 @@ export default {
                 : (data = await this.$request(this.editUrl, "POST", values));
 
               // 修改请求返回
-              this.handelEditResult
-                ? await this.handelEditResult(true, data)
+              this.handleEditResult
+                ? await this.handleEditResult(true, data)
                 : await this.getList();
             } catch (error) {
               console.log(">>>error editRequest", error);
 
               // 修改失败返回
-              this.handelEditResult ? await this.handelEditResult(false, error) : "";
+              this.handleEditResult ? await this.handleEditResult(false, error) : "";
             }
           }
 
@@ -469,21 +472,21 @@ export default {
             // 请求即将开始
             let params = {};
             params = e;
-            self.handelWillDelete ? await self.handelWillDelete(params) : null;
+            self.handleWillDelete ? await self.handleWillDelete(params) : null;
 
             // 请求删除数据
             let data = "";
             self.deleteRequest
-              ? (data = await self.deleteRequest(params))
-              : (data = await self.$request(self.deleteUrl, "POST", params));
+              ? data = await self.deleteRequest(params)
+              : data = await self.$request(self.deleteUrl, "POST", params);
 
             // 请求删除返回结果
-            self.handelAddResult
-              ? await self.handelDeleteResult(true, data)
+            self.handleAddResult
+              ? await self.handleDeleteResult(true, data)
               : await self.getList();
           } catch (error) {
             console.log(">>>error deleteRequest", error);
-            self.handelDeleteResult ? await self.handelDeleteResult(false, error) : "";
+            self.handleDeleteResult ? await self.handleDeleteResult(false, error) : "";
           }
         },
       });
@@ -495,7 +498,7 @@ export default {
       this.search = e;
 
       // 即将开始搜索
-      this.handelWillSearch ? await this.handelWillSearch(e) : null;
+      this.handleWillSearch ? await this.handleWillSearch(e) : null;
 
       this.pagination.page = "1";
       await this.getList();
@@ -503,15 +506,15 @@ export default {
     async clearSearch() {
       this.search = {};
       // 即将开始搜索
-      this.handelWillSearch ? await this.handelWillSearch({}) : null;
+      this.handleWillSearch ? await this.handleWillSearch({}) : null;
 
       this.pagination.page = "1";
       await this.getList();
     },
     async change(pagination, filters, sorter) {
       // console.log(pagination);
-      // console.log(filters);
-      // console.log(sorter);
+      console.log(filters);
+      console.log(sorter);
       this.pagination.current = pagination.current;
 
       localStorage.setItem("pageSize", pagination.pageSize);
@@ -538,7 +541,7 @@ export default {
       }
 
       // 即将开始请求列表接口
-      this.handelWillGetList ? await this.handelWillGetList(params) : null;
+      this.handleWillGetList ? await this.handleWillGetList(params) : null;
 
       let data = "";
       if (this.listRequest) {
@@ -549,10 +552,10 @@ export default {
 
       // 请求返回处理数据
       if (data && data.data) {
-        this.handelListData ? await this.handelListData(data.data) : null;
+        this.handleListData ? await this.handleListData(data.data) : null;
         this.dataSource = data.data;
       } else {
-        this.handelListData ? await this.handelListData(data) : null;
+        this.handleListData ? await this.handleListData(data) : null;
         this.dataSource = data;
       }
 

@@ -10,6 +10,13 @@
 # [simple-search-view](./__doc__/simple-search-view组件说明.md)
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
+## 更新内容
+
+# 1.2.1
+1. fast-table handle方法拼写错误
+2. 修复 编辑 弹窗内容错误
+3. 修复 编辑 没有带id错误
+
 # 1.2.0
 1. custom-form-item 显示字段改成title，name用来做表单
 # 1.1.9
