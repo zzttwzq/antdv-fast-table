@@ -2,202 +2,137 @@
   <div>
     <a-card :title="title">
       <div>
-        <SimpleSearchView :list="searchList2" @searchData="searchData" @clearSearch="clearSearch"
-          v-if="searchList2.length" ref="search"></SimpleSearchView>
+        <SimpleSearchView
+          v-if="tableSearchList2.length"
+          ref="search"
+          :list="tableSearchList2"
+          @searchData="searchData"
+          @clearSearch="clearSearch"
+        ></SimpleSearchView>
       </div>
       <div>
         <a-space class="operator">
           <div>
-            <a-button v-if="!disableAddAction" @click="add" type="primary">新建</a-button>
+            <a-button v-if="tableAdd" @click="addRecord" type="primary">新建</a-button>
             <slot name="topLeftButtons"></slot>
           </div>
           <slot name="topRightButtons"></slot>
         </a-space>
-        <StandardTable :loading="loading" :columns="columns2" :dataSource="dataSource"
-          :pagination="disablePagination ? null : pagination" @change="change" :onExpand="onExpand"
-          :scroll="{ x: tableWidth2, y: tableHeight2 }">
+        <StandardTable
+          :rowKey="tableRowKey"
+          :loading="loading"
+          :columns="tableHeaderList2"
+          :dataSource="dataSource"
+          :pagination="showPagination ? pagination : null"
+          @change="change"
+          :onExpand="onExpand"
+          :scroll="{ x: tableWidth2, y: tableHeight2 }"
+        >
           <div slot="description" slot-scope="{ text }">
             {{ text }}
           </div>
           <div slot="action" slot-scope="{ record }">
-            <a v-if="!disableEditAction" @click="edit(record)" style="margin-right: 8px">
+            <a v-if="tableEdit" @click="editRecord(record)" style="margin-right: 8px">
               编辑
             </a>
-            <a v-if="!disableDeleteAction" @click="deleteRecord(record.id)"> 删除 </a>
+            <a v-if="tableDelete" @click="deleteRecord(record.id)"> 删除 </a>
             <slot name="buttons" :record="record"></slot>
           </div>
         </StandardTable>
       </div>
     </a-card>
     <!-- 角色添加和修改 -->
-    <a-modal v-model="visible" :title="isAdd ? '新增' : '修改'" :ok-text="isAdd ? '新增' : '修改'" cancel-text="取消"
-      :loading="loading" @ok="submit" @cancel="cancel" :width="custEditModelWidth">
-      <slot v-if="custEditModel" name="custEditModel"></slot>
-      <CustomFormList :prefixClick="prefixClick" :suffixClick="suffixClick" ref="form" :list="formList2"
-        :showBtns="false" v-else></CustomFormList>
+    <a-modal
+      v-model="visible"
+      :width="tableFormWidth"
+      :title="isAdd ? '新增' : '修改'"
+      :ok-text="isAdd ? '新增' : '修改'"
+      :loading="loading"
+      cancel-text="取消"
+      @ok="submit"
+      @cancel="cancel"
+    >
+      <CustomFormList
+        v-if="!useCustomForm"
+        ref="form"
+        :prefixClick="prefixClick"
+        :suffixClick="suffixClick"
+        :list="tableFormList2"
+        :showBtns="false"
+      ></CustomFormList>
+      <slot name="tableCustomForm"></slot>
     </a-modal>
   </div>
 </template>
 
 <script>
-// 本地获取默认数量
-let pageSize = localStorage.getItem("pageSize");
-pageSize = Number(pageSize);
+const onWillSearch = "onWillSearch";
+const onWillSearchReqeust = "onWillSearchReqeust";
+const onDidSearch = "onDidSearch";
+
+const onWillGetList = "onWillGetList";
+const onWillGetListRequest = "onWillGetListRequest";
+const onGetListSuccess = "onGetListSuccess";
+const onGetListError = "onGetListError";
+
+const onWillAdd = "onWillAdd";
+const onAddSuccess = "onAddSuccess";
+const onAddError = "onAddError";
+
+const onWillEdit = "onWillEdit";
+const onEditSuccess = "onEditSuccess";
+const onEditError = "onEditError";
+
+const onWillSaveReqeust = "onWillSaveReqeust";
+
+const onWillDelete = "onWillDelete";
+const onWillDeleteReqeust = "onWillDeleteReqeust";
+const onDeleteSuccess = "onDeleteSuccess";
+const onDeleteError = "onDeleteError";
+
+const onFormPrefixClick = "onFormPrefixClick";
+const onFormSuffixClick = "onFormSuffixClick";
 
 export default {
   name: "FastTable",
   props: {
-    // 表行标记
-    // rowKey: {
-    //   type: String | Number,
-    //   required: false,
-    //   default: "key",
-    // },
-    ///========= 数据源
-    // 表头
-    columns: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    // 搜索列表
-    searchList: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    // 增加修改modal
-    formList: {
-      type: Array,
-      required: true,
-    },
-    // 标题
+    //========= 表格头部搜索等区域
+    // 表格标题
     title: {
       type: String,
       required: false,
       default: "",
     },
-    ///========= 页面功能
-    custEditModel: {
+    // 表格头部搜索内容
+    tableSearchList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+
+    //========= 表格
+    // 表头属性数组
+    tableHeaderList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    // 显示table底部的Pagination
+    showPagination: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
     },
-    custEditModelWidth: {
+    // 表格宽
+    tableWidth: {
       type: Number,
-      required: false,
-      default: 500,
+      default: 0,
     },
-    // 禁用自带的删除操作功能
-    disableDeleteAction: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // 禁用自带的编辑操作功能
-    disableEditAction: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // 禁用自带的编辑操作功能
-    disableAddAction: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // 禁用table底部的cardview
-    disableBackCardView: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // 禁用table底部的Pagination
-    disablePagination: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // 提交按钮点击
-    submitClick: {
-      type: Function,
-      required: false,
-      default: undefined
-    },
-    // 取消按钮点击
-    cancelClick: {
-      type: Function,
-      required: false,
-      default: undefined,
-    },
-
-    ///========= 分页字段
-    pageNumKey: {
-      type: String,
-      required: false,
-      default: "pageNum",
-    },
-    pageSizeKey: {
-      type: String,
-      required: false,
-      default: "pageSize",
-    },
-    pageStart: {
+    // 表格高
+    tableHeight: {
       type: Number,
-      required: false,
-      default: 1,
+      default: 0,
     },
-
-    ///========= 接口请求
-    listUrl: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    addUrl: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    editUrl: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    editDetailUrl: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    deleteUrl: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    // 增删改查接口封装过的
-    listRequest: {
-      type: Function,
-      required: false,
-      default: () => { },
-    },
-    addRequest: {
-      type: Function,
-      required: false,
-    },
-    editRequest: {
-      type: Function,
-      required: false,
-    },
-    editDetailRequest: {
-      type: Function,
-      required: false,
-    },
-    deleteRequest: {
-      type: Function,
-      required: false,
-    },
-
-    // ========= 方法
     // 扩展点击的时候 Function(expanded<Boolen>, rowItem<Object>)
     onExpand: {
       type: Function,
@@ -209,64 +144,144 @@ export default {
       required: false,
     },
 
-    ///========= 回调
-    // 处理新增修改数据 Function(<修改后的数据>)
-    handleWillSearch: {
-      type: Function,
+    ///========= 表格数据
+    // 表格增加按钮
+    tableAdd: {
+      type: Boolean,
       required: false,
+      default: true,
     },
-    // 处理即将调用请求接口 Function(<params参数>)
-    handleWillGetList: {
+    // 表格修改按钮
+    tableEdit: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    // 表格删除操作
+    tableDelete: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    /// 请求pageNum参数字段名称
+    pageNumKey: {
+      type: String,
+      required: false,
+      default: "pageNum",
+    },
+    /// 请求pageSize参数字段名称
+    pageSizeKey: {
+      type: String,
+      required: false,
+      default: "pageSize",
+    },
+    /// 请求pageNum 起始数据
+    pageStart: {
+      type: Number,
+      required: false,
+      default: 1,
+    },
+
+    ///========= table增改弹窗
+    // 表格增加修改弹窗内容列表
+    tableFormList: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    // 弹窗宽度
+    tableFormWidth: {
+      type: Number,
+      required: false,
+      default: 500,
+    },
+    // 弹窗提交按钮点击
+    tableFormSubmitClick: {
       type: Function,
       required: false,
+      default: undefined,
+    },
+    // 弹窗取消按钮点击
+    tableFormCancelClick: {
+      type: Function,
+      required: false,
+      default: undefined,
+    },
+    // 使用自定义的表格增加修改弹窗
+    useCustomForm: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    ///========= 接口请求
+    // 列表请求方法
+    listRequest: {
+      type: Function,
+      required: true,
+    },
+    // 添加请求方法
+    addRequest: {
+      type: Function,
+      required: true,
+    },
+    // 修改请求方法
+    editRequest: {
+      type: Function,
+      required: true,
+    },
+    // 详情请求方法
+    detailRequest: {
+      type: Function,
+      required: true,
+    },
+    // 删除请求方法
+    deleteRequest: {
+      type: Function,
+      required: true,
+    },
+    // 处理列表请求参数
+    handleListRequestParams: {
+      type: Function,
+      required: false,
+      default: null,
+    },
+    // 处理添加/编辑请求参数
+    handleSaveRequestParams: {
+      type: Function,
+      required: false,
+      default: null,
+    },
+    // 处理详情请求参数
+    handleDetailRequestParams: {
+      type: Function,
+      required: false,
+      default: null,
+    },
+    // 处理删除请求参数
+    handleDeleteRequestParams: {
+      type: Function,
+      required: false,
+      default: null,
     },
     // 处理列表数据
     handleListData: {
       type: Function,
       required: false,
+      default: null,
     },
-    // 处理新增修改数据 Function()
-    handleWillAdd: {
+    // 新增或修改或删除数据以后
+    afterModifyListData: {
       type: Function,
       required: false,
+      default: null,
     },
-    // 处理即将点击修改按钮 Function(<修改前的数据>)
-    handleWillEdit: {
-      type: Function,
+
+    // 显示日志提示
+    showLog: {
+      type: Boolean,
       required: false,
-    },
-    // 处理新增修改数据 Function(<修改后的数据>)
-    handleModifyData: {
-      type: Function,
-      required: false,
-    },
-    // 处理新增返回结果 Function(<请求成功状态>, <请返回结果>)
-    handleAddResult: {
-      type: Function,
-      required: false,
-    },
-    // 处理修改返回结果 Function(<请求成功状态>, <请返回结果>)
-    handleEditResult: {
-      type: Function,
-      required: false,
-    },
-    // 处理即将删除操作 Function(params<Object>)
-    handleWillDelete: {
-      type: Function,
-      required: false,
-    },
-    // 处理删除返回结果 Function(<请求成功状态>, <请返回结果>)
-    handleDeleteResult: {
-      type: Function,
-      required: false,
-    },
-    tableWidth: {
-      type: Number,
-      default: 0,
-    },
-    tableHeight: {
-      type: Number,
-      default: 0,
+      default: true,
     },
   },
   data() {
@@ -276,9 +291,9 @@ export default {
       tableWidth2: this.tableWidth,
       tableHeight2: this.tableHeight,
       pagination: {
-        defaultPageSize: 10,
+        defaultPageSize: 30,
         current: this.pageStart,
-        pageSize: pageSize ? pageSize : 30,
+        pageSize: 30,
         total: 0,
         showTotal: (total) => `共 ${total} 条记录`,
         showQuickJumper: true,
@@ -289,9 +304,9 @@ export default {
         pageSizeOptions: ["30", "40", "60", "80", "100"],
       },
       dataSource: [],
-      columns2: this.columns,
-      searchList2: this.searchList,
-      formList2: this.formList,
+      tableHeaderList2: this.tableHeaderList,
+      tableSearchList2: this.tableSearchList,
+      tableFormList2: this.tableFormList,
 
       /// 表单提交
       editData: {}, // 修改的内容
@@ -300,8 +315,14 @@ export default {
     };
   },
   watch: {
-    columns(val) {
-      this.columns2 = val;
+    tableHeaderList(val) {
+      this.tableHeaderList2 = val;
+    },
+    tableSearchList(val) {
+      this.tableSearchList2 = val;
+    },
+    tableFormList(val) {
+      this.tableFormList2 = val;
     },
     tableWidth(val) {
       this.tableWidth2 = val;
@@ -309,92 +330,192 @@ export default {
     tableHeight(val) {
       this.tableHeight2 = val;
     },
-    searchList(val) {
-      this.searchList2 = val;
-    },
-    formList(val) {
-      this.formList2 = val;
-    },
   },
   mounted() {
-    this.getList();
-
+    // 本地获取默认数量
+    let pageSize = localStorage.getItem("pageSize");
+    this.pageSize = Number(pageSize);
     this.tableWidth2 = 0;
-    this.columns.map((it) => {
+    this.tableHeaderList.map((it) => {
       this.tableWidth2 += it["width"] != null ? it["width"] : 100;
     });
-    // console.log(">>> x", this.x);
+
+    this.getList();
   },
   methods: {
-    // ============= 其他方法
-    // 设置搜索数据
-    setSearchValues(formValues) {
-      this.$refs.search.setFormValues(formValues);
+    // ============= 表格头部表
+    // 设置搜索表单数据
+    setSearchForm(formValues) {
+      this.$refs.search ? this.$refs.search.setFormValues(formValues) : null;
     },
-    // 设置表单数据
-    setFormValues(formValues) {
-      this.$refs.form.setFormValues(formValues);
+    // 重置搜索表单数据
+    resetSearchForm() {
+      this.$refs.search ? this.$refs.search.getForm().resetFields() : null;
+    },
+    // 查找数据
+    async searchData(e) {
+      this.search = e;
+      this.pagination.page = "1";
+
+      // 准备查询数据
+      this.$emit(onWillSearch, this.search);
+
+      // 准备请求查询接口
+      this.$emit(onWillSearchReqeust, this.search, this.pagination);
+
+      // 请求接口
+      await this.getList();
+
+      // 请求完成
+      this.$emit(onDidSearch);
+    },
+    // 重置查找结果
+    async clearSearch() {
+      this.search = {};
+      this.resetSearchForm();
+      this.pagination.page = "1";
+
+      // 准备查询数据
+      this.$emit(onWillSearch, this.search);
+
+      // 准备请求查询接口
+      this.$emit(onWillSearchReqeust, this.search, this.pagination);
+
+      // 请求接口
+      await this.getList();
+
+      // 请求完成
+      this.$emit(onDidSearch);
     },
 
+    // ============= 表格数据操作
+    // 表行标记
+    tableRowKey(row) {
+      return row.id;
+    },
+    // 设置表格弹窗表单数据
+    setTableForm(formValues) {
+      this.$refs.form.setFormValues(formValues);
+    },
+    // 重置表格弹窗表单数据
+    resetTableForm() {
+      this.$refs.form ? this.$refs.form.getForm().resetFields() : null;
+    },
+    // 添加表格数据
+    async addRecord() {
+      // 先显示页面
+      this.isAdd = true;
+      this.visible = true;
+
+      // 准备新增操作
+      this.$emit(onWillAdd);
+      this.log("addRecord", "");
+
+      this.$nextTick(async () => {
+        this.resetTableForm();
+        this.log("addRecord->nextTick", "resetTableForm");
+      });
+    },
+    // 编辑表格数据
+    async editRecord(e) {
+      // 显示弹窗
+      this.isAdd = false;
+      this.visible = true;
+
+      // 调用详情接口
+      try {
+        if (this.detailRequest) {
+          let params = e.id;
+          if (this.handleDetailRequestParams) {
+            params = await this.handleDetailRequestParams(params);
+            this.log("editRecord->handleDetailRequestParams", params);
+          }
+          this.editData = await this.detailRequest(params);
+        } else {
+          this.editData = e;
+          this.editData.tag_id = Number(this.editData.tag_id);
+        }
+
+        this.log("editRecord->detailRequestSuccess", this.editData);
+      } catch (error) {
+        this.log("editRecord->detailRequestError", error);
+      }
+
+      // 准备修改操作
+      this.$emit(onWillEdit, this.editData);
+      this.log("editRecord->onWillEdit", this.editData);
+
+      // 刷新form
+      this.$nextTick(() => {
+        this.resetTableForm();
+        this.setTableForm(this.editData);
+        this.log("editRecord->nextTick", "resetTableForm setTableForm");
+      });
+    },
+    // 删除表格数据
+    async deleteRecord(id) {
+      let self = this;
+
+      // 准备删除操作
+      this.$emit(onWillDelete, id);
+      this.log("deleteRecord->onWillDelete", id);
+
+      this.$confirm({
+        title: "提示",
+        content: "是否确认删除？",
+        cancelText: "取消",
+        async onOk() {
+          // 请求参数
+          let params = id;
+
+          self.$emit(onWillDeleteReqeust, params);
+          self.log("deleteRecord-onWillDeleteReqeust", params);
+
+          // 准备处理参数，方法可为空
+          if (self.handleDeleteRequestParams) {
+            params = await self.handleDeleteRequestParams(params);
+            self.log("deleteRecord-handleDeleteRequestParams", params);
+          }
+
+          // 请求接口
+          try {
+            let res = await self.deleteRequest(params);
+            self.$emit(onDeleteSuccess, res);
+
+            // 成功回调
+            self.log("deleteRecord-onDeleteSuccess", res);
+
+            // 成功后续刷新
+            if (self.afterModifyListData) {
+              await self.afterModifyListData(res);
+            } else {
+              self.getList();
+            }
+          } catch (error) {
+            self.$emit(onDeleteError, error);
+
+            // 失败回调
+            self.log("deleteRecord->onDeleteError", error);
+          }
+        },
+      });
+    },
+    // 弹窗取消
     cancel(e) {
       e.preventDefault();
       if (this.cancelClick) {
-        this.cancelClick()
+        this.cancelClick();
         return;
       }
 
       this.visible = false;
       this.isAdd = false;
     },
-
-    // ============= 增加，修改，删除方法
-    // 增加删除修改操作
-    async add() {
-      // 先显示页面
-      this.isAdd = true;
-      this.visible = true;
-
-      this.$nextTick(async () => {
-        // 新增即将开始
-        this.handleWillAdd ? await this.handleWillAdd() : null;
-        this.$refs.form ? this.$refs.form.resetForm() : null;
-      });
-    },
-    async edit(e) {
-      // 先显示页面
-      this.isAdd = false;
-      this.visible = true;
-
-      // 修改即将开始
-      this.handleWillEdit ? this.handleWillEdit(this.editData) : null;
-
-      if (this.editDetailRequest) {
-        let detail = await this.editDetailRequest(e.id);
-        this.editData = detail;
-      } else if (this.editDetailUrl) {
-        let detail = await this.$request(this.addUrl, "POST", { id: e.id });
-        this.editData = detail;
-      } else {
-        this.editData = e;
-        this.editData.tag_id = Number(this.editData.tag_id);
-      }
-
-      this.$nextTick(() => {
-        this.$refs.form.setFormValues(this.editData);
-      });
-    },
+    // 弹窗确认
     async submit(e) {
       e.preventDefault();
       if (this.submitClick) {
-        this.submitClick()
-        return;
-      }
-
-      // 使用自己的customform
-      if (this.$refs.form == null) {
-        this.handleModifyData ? await this.handleModifyData({ isAdd: this.isAdd }) : null;
-        this.visible = false;
-        console.log('>>>>>123123');
+        this.submitClick();
         return;
       }
 
@@ -404,10 +525,6 @@ export default {
           if (this.isAdd == false) {
             values.id = this.editData.id;
           }
-
-          console.log(">>>>>> ", this.editData)
-          console.log(">>>>>> ", values.id)
-
           if (values["createAt"] != null && typeof values["createAt"] == "object") {
             values["createAt"] = values["createAt"].valueOf();
           }
@@ -418,42 +535,42 @@ export default {
             values["deleteAt"] = values["deleteAt"].valueOf();
           }
 
-          // 增加或修改即将开始
-          this.handleModifyData ? await this.handleModifyData(values) : null;
+          // 增加修改即将开始
+          this.$emit(onWillSaveReqeust, values);
+          this.log("submit->onWillSaveReqeust", values);
 
-          if (this.isAdd) {
-            try {
-              // 新增请求开始
-              let data = "";
-              this.addRequest
-                ? (data = await this.addRequest(values))
-                : (data = await this.$request(this.addUrl, "POST", values));
+          // 准备处理参数，方法可为空
+          if (this.handleSaveRequestParams) {
+            values = await this.handleSaveRequestParams(values);
+            this.log("submit-handleSaveRequestParams", values);
+          }
 
-              // 新增结果返回
-              this.handleAddResult
-                ? await this.handleAddResult(true, data)
-                : await this.getList();
-            } catch (error) {
-              // 新增失败返回
-              this.handleAddResult ? await this.handleAddResult(false, error) : "";
+          // 增加修改请求
+          try {
+            let res = {};
+            if (this.isAdd) {
+              res = await this.addRequest(values);
+              this.$emit(onAddSuccess, res);
+              this.log("submit->onAddSuccess", res);
+            } else {
+              res = await this.editRequest(values);
+              this.$emit(onEditSuccess, res);
+              this.log("submit->onEditSuccess", res);
             }
-          } else {
-            try {
-              // 修改请求开始
-              let data = "";
-              this.editRequest
-                ? (data = await this.editRequest(values))
-                : (data = await this.$request(this.editUrl, "POST", values));
 
-              // 修改请求返回
-              this.handleEditResult
-                ? await this.handleEditResult(true, data)
-                : await this.getList();
-            } catch (error) {
-              console.log(">>>error editRequest", error);
-
-              // 修改失败返回
-              this.handleEditResult ? await this.handleEditResult(false, error) : "";
+            // 成功后续刷新
+            if (this.afterModifyListData) {
+              await this.afterModifyListData(res);
+            } else {
+              this.getList();
+            }
+          } catch (error) {
+            if (this.isAdd) {
+              this.$emit(onAddError, error);
+              this.log("submit->onAddError", error);
+            } else {
+              this.$emit(onEditError, error);
+              this.log("submit->onEditError", error);
             }
           }
 
@@ -461,79 +578,22 @@ export default {
         }
       });
     },
-    deleteRecord(e) {
-      let self = this;
-      this.$confirm({
-        title: "提示",
-        content: "是否确认删除？",
-        cancelText: "取消",
-        async onOk() {
-          try {
-            // 请求即将开始
-            let params = {};
-            params = e;
-            self.handleWillDelete ? await self.handleWillDelete(params) : null;
-
-            // 请求删除数据
-            let data = "";
-            self.deleteRequest
-              ? data = await self.deleteRequest(params)
-              : data = await self.$request(self.deleteUrl, "POST", params);
-
-            // 请求删除返回结果
-            self.handleAddResult
-              ? await self.handleDeleteResult(true, data)
-              : await self.getList();
-          } catch (error) {
-            console.log(">>>error deleteRequest", error);
-            self.handleDeleteResult ? await self.handleDeleteResult(false, error) : "";
-          }
-        },
-      });
-    },
-
-    // ============= 搜索和列表方法
-    // table操作
-    async searchData(e) {
-      this.search = e;
-
-      // 即将开始搜索
-      this.handleWillSearch ? await this.handleWillSearch(e) : null;
-
-      this.pagination.page = "1";
-      await this.getList();
-    },
-    async clearSearch() {
-      this.search = {};
-      // 即将开始搜索
-      this.handleWillSearch ? await this.handleWillSearch({}) : null;
-
-      this.pagination.page = "1";
-      await this.getList();
-    },
-    async change(pagination, filters, sorter) {
-      // console.log(pagination);
-      console.log(filters);
-      console.log(sorter);
-      this.pagination.current = pagination.current;
-
-      localStorage.setItem("pageSize", pagination.pageSize);
-
-      if (this.onChange) {
-        await this.onChange();
-      } else {
-        await this.getList();
-      }
-    },
+    // 列表接口
     async getList() {
       this.loading = true;
 
+      // 即将开始获取列表
+      this.$emit(onWillGetList);
+      this.log("getList-onWillGetList");
+
+      // 如果有search的内容，则添加search内容
       let params = {
         ...this.search,
       };
+      // 添加分页信息
       params[this.pageNumKey] = this.pagination.current;
       params[this.pageSizeKey] = this.pagination.pageSize;
-
+      // 这个是开始和结束时间字段解析，解析成 beginTime，endTime 两个参数
       if (params.time && params.time.length > 1) {
         params.beginTime = params.time[0].unix();
         params.endTime = params.time[1].unix();
@@ -541,38 +601,73 @@ export default {
       }
 
       // 即将开始请求列表接口
-      this.handleWillGetList ? await this.handleWillGetList(params) : null;
+      await this.$emit(onWillGetListRequest, params);
+      this.log("getList-onWillGetListRequest", params);
 
-      let data = "";
-      if (this.listRequest) {
-        data = await this.listRequest(params);
-      } else {
-        data = await this.$request(this.listUrl, "post", params);
+      // 准备处理参数，方法可为空
+      if (this.handleListRequestParams) {
+        params = await this.handleListRequestParams(params);
+        this.log("getList-handleListRequestParams", params);
       }
 
-      // 请求返回处理数据
-      if (data && data.data) {
-        this.handleListData ? await this.handleListData(data.data) : null;
-        this.dataSource = data.data;
-      } else {
-        this.handleListData ? await this.handleListData(data) : null;
-        this.dataSource = data;
-      }
+      try {
+        let data = await this.listRequest(params);
+        let list = data && data.data ? data.data : data;
+        // 给列表数据，给page添加total等字段
+        if (this.handleListData) {
+          list = await this.handleListData(list);
+          this.log("getList-handleListData", list);
+        }
 
-      this.pagination = {
-        ...this.pagination,
-        total: data && data.total ? data.total : 0,
-      };
+        this.dataSource = list;
+
+        this.pagination = {
+          ...this.pagination,
+          total: data && data.total ? data.total : 0,
+        };
+
+        this.$emit(onGetListSuccess, data);
+        this.log("getList-onGetListSuccess", data);
+      } catch (error) {
+        this.$emit(onGetListError, error);
+        this.log("getList-onGetListError", error);
+      }
 
       this.loading = false;
     },
 
-    // 组件事件
-    prefixClick(e) {
-      this.$emit("prefixClick", e);
+    // ============= 搜索和列表方法
+    // pagenation事件
+    async change(pagination, filters, sorter) {
+      this.pagination.current = pagination.current;
+      localStorage.setItem("pageSize", pagination.pageSize);
+
+      this.log("change", pagination, filters, sorter);
+
+      if (this.onChange) {
+        await this.onChange();
+        this.log("change->onChange");
+      } else {
+        await this.getList();
+      }
     },
+
+    // ============= form表单事件
+    // form表单组件左侧组件点击
+    prefixClick(e) {
+      this.$emit(onFormPrefixClick, e);
+    },
+    // form表单组件右侧组件点击
     suffixClick(e) {
-      this.$emit("suffixClick", e);
+      this.$emit(onFormSuffixClick, e);
+    },
+
+    // ============= 其他
+    // 统一的控制台输出
+    log(title, msg) {
+      if (this.showLog && process.env.NODE_ENV != "prod") {
+        console.log(`[fast-table->${title}]`, msg ?? "");
+      }
     },
   },
 };
