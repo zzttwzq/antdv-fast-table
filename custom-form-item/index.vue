@@ -2,11 +2,11 @@
   <a-form-item
     :label="item.title"
     :labelCol="{
-      span: item.formLabelWidth ? item.formLabelWidth : 6,
-      offset: item.formLabelOffset ? item.formLabelOffset : 0,
+      span: item.formLabelWidth ? item.formLabelWidth : 10,
+      offset: item.formLabelOffset ? item.formLabelOffset : 0
     }"
     :wrapperCol="{
-      span: item.formWrapperWidth ? item.formWrapperWidth : 18,
+      span: item.formWrapperWidth ? item.formWrapperWidth : 10,
       offset: item.formWrapperOffset ? item.formWrapperOffset : 0,
     }"
     :labelAlign="item.labelAlign ? item.labelAlign : 'right'"
@@ -141,9 +141,7 @@
     <!-- 图片上传 -->
 
     <!-- 自定义类型 -->
-    <div>
-      
-    </div>
+    <div></div>
   </a-form-item>
 </template>
 
