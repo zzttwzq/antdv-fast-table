@@ -1,49 +1,29 @@
 <template>
   <div class="standard-table">
-    <a-table
-      :bordered="bordered"
-      :loading="loading"
-      :columns="columns"
-      :dataSource="dataSource"
-      :pagination="pagination ? pagination : false"
-      :expandedRowKeys="expandedRowKeys"
-      :expandedRowRender="expandedRowRender"
-      :scroll="scroll"
-      @change="onChange"
-      @expand="
-        (expanded, item) => {
-          onExpand ? onExpand(expanded, item) : null;
-        }
-      "
-      :rowSelection="
-        selectedRows
+    <a-table :bordered="bordered" :loading="loading" :columns="columns" :dataSource="dataSource"
+      :pagination="pagination" :expandedRowKeys="expandedRowKeys" :expandedRowRender="expandedRowRender"
+      :scroll="scroll" @change="onChange" @expand="(expanded, item) => {
+        onExpand ? onExpand(expanded, item) : null;
+      }
+        " :rowSelection="selectedRows
           ? {
-              selectedRowKeys: selectedRowKeys,
-              onChange: updateSelect,
-            }
+            selectedRowKeys: selectedRowKeys,
+            onChange: updateSelect,
+          }
           : undefined
-      "
-    >
-      <template
-        slot-scope="text, record, index"
-        :slot="slot"
-        v-for="slot in Object.keys($scopedSlots).filter(
-          (key) => key !== 'expandedRowRender'
-        )"
-      >
+          ">
+      <template slot-scope="text, record, index" :slot="slot" v-for="slot in Object.keys($scopedSlots).filter(
+        (key) => key !== 'expandedRowRender'
+      )">
         <slot :name="slot" v-bind="{ text, record, index }"></slot>
       </template>
       <template :slot="slot" v-for="slot in Object.keys($slots)">
         <slot :name="slot"></slot>
       </template>
-      <template
-        slot-scope="record, index, indent, expanded"
-        :slot="$scopedSlots.expandedRowRender ? 'expandedRowRender' : ''"
-      >
-        <slot
-          v-bind="{ record, index, indent, expanded }"
-          :name="$scopedSlots.expandedRowRender ? 'expandedRowRender' : ''"
-        ></slot>
+      <template slot-scope="record, index, indent, expanded"
+        :slot="$scopedSlots.expandedRowRender ? 'expandedRowRender' : ''">
+        <slot v-bind="{ record, index, indent, expanded }"
+          :name="$scopedSlots.expandedRowRender ? 'expandedRowRender' : ''"></slot>
       </template>
     </a-table>
   </div>
@@ -141,17 +121,19 @@ export default {
 .standard-table {
   .alert {
     margin-bottom: 16px;
+
     .message {
       a {
         font-weight: 600;
       }
     }
+
     .clear {
       float: right;
     }
   }
 }
+
 // /deep/ .ant-table-tbody > tr > td {
 //   padding: 0px!important;
-// }
-</style>
+// }</style>

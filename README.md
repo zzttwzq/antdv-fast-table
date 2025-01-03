@@ -11,11 +11,18 @@
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
 ## 更新内容
+
+# 1.2.4
+1. fast-table api 变更
+2. 修复不显示pagination 功能
+3. page默认从1开始
+
 # 1.2.3
 1. 修复 fast-table 搜索框宽度问题
   
 # 1.2.2
 1. 整理 fast-table 方法和错误
+
 # 1.2.1
 1. fast-table handle方法拼写错误
 2. 修复 编辑 弹窗内容错误
