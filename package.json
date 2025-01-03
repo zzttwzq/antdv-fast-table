@@ -1,6 +1,6 @@
 {
     "name": "antdv-fast-table",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "description": "针对antdv UI框架快速创建后台管理列表增删改查等功能的组件库",
     "main": "index.js",
     "scripts": {

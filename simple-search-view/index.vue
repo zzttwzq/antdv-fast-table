@@ -150,7 +150,6 @@ export default {
         //   this.search[it.fieldName2] = it.value2;
         // }
 
-        it.labelAlign = "left";
         if (
           it.decorator.length > 1 &&
           it.decorator[1].rules &&
@@ -169,12 +168,6 @@ export default {
           }
 
           if (this.enableCollape) {
-            // console.log("row", row);
-            // console.log("i", i);
-            // console.log("it", it);
-            // console.log("li", li);
-            // console.log("this.showRows", this.showRows);
-            // console.log("?", this.showRows >= row);
             if (this.showRows >= row) {
               if (i != 0) {
                 list2.push(li);
@@ -188,8 +181,6 @@ export default {
 
         i++;
       });
-
-      // console.log(this.search);
 
       if (li.length > 0) {
         list.push(li);

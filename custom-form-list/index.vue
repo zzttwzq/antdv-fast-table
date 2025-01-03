@@ -119,7 +119,6 @@ export default {
   },
   methods: {
     submit() {
-      console.log("???111 ");
       this.form.validateFields((err, values) => {
         console.log("??? ", values);
         if (!err) {

@@ -12,6 +12,9 @@
 
 ## 更新内容
 
+# 1.2.5
+1. 修复custom form 表单
+
 # 1.2.4
 1. fast-table api 变更
 2. 修复不显示pagination 功能

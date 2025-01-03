@@ -2,14 +2,14 @@
   <a-form-item
     :label="item.title"
     :labelCol="{
-      span: item.formLabelWidth ? item.formLabelWidth : 10,
-      offset: item.formLabelOffset ? item.formLabelOffset : 0
-    }"
-    :wrapperCol="{
-      span: item.formWrapperWidth ? item.formWrapperWidth : 10,
-      offset: item.formWrapperOffset ? item.formWrapperOffset : 0,
+      span: 6,
+      offset: item.formLabelOffset ? item.formLabelOffset : 2,
     }"
     :labelAlign="item.labelAlign ? item.labelAlign : 'right'"
+    :wrapperCol="{
+      span: 16,
+      offset: item.formWrapperOffset ? item.formWrapperOffset : 0,
+    }"
   >
     <!-- 文本类型 -->
     <a-input
@@ -17,6 +17,7 @@
       :disabled="item.disabled ? true : false"
       v-decorator="item.decorator"
       :placeholder="item.placeholder ? item.placeholder : '请输入'"
+      @change="item.change ? item.change : null"
     >
       <template v-if="item.prefixIcon || item.prefixText" slot="prefix"
         ><div style="cursor: pointer" @click="prefixClick(item)">
@@ -25,7 +26,7 @@
         </div>
       </template>
       <template v-if="item.suffixIcon || item.suffixText" slot="suffix">
-        <div @click="suffixClick(item)" style="cursor: pointer">
+        <div style="cursor: pointer" @click="suffixClick(item)">
           <a-icon v-if="item.suffixIcon" :type="item.suffixIcon" />
           <span v-if="item.suffixText">{{ item.suffixText }}</span>
         </div>
@@ -41,6 +42,7 @@
         maxRows: item.maxRows ? item.maxRows : 6,
       }"
       v-decorator="item.decorator"
+      @change="item.change ? item.change : null"
     />
 
     <!-- 数字类型 -->
@@ -51,6 +53,7 @@
       v-decorator="item.decorator"
       :precision="item.precision ? Number(item.precision) : 0"
       :placeholder="item.placeholder ? item.placeholder : '请输入'"
+      @change="item.change ? item.change : null"
     >
       <!-- <a-icon slot="prefix" type="user" />
       <a-tooltip slot="suffix" title="Extra information">
@@ -65,6 +68,7 @@
         v-decorator="item.decorator"
         :precision="item.precision ? Number(item.precision) : 0"
         :placeholder="item.placeholder ? item.placeholder : '请输入'"
+        @change="item.change ? item.change : null"
       />
       &nbsp;<span>至</span>&nbsp;
       <a-input-number
@@ -72,6 +76,7 @@
         v-decorator="item.decorator2"
         :precision="item.precision2 ? Number(item.precision2) : 0"
         :placeholder="item.placeholder2 ? item.placeholder2 : '请输入'"
+        @change="item.change ? item.change : null"
       />
     </div>
 
@@ -81,9 +86,9 @@
       v-else-if="item.type == 'date'"
       :showTime="item.showTime"
       :disabled-date="item.disabledDate ? item.disabledDate(item) : null"
-      @change="item.dateChanged ? item.dateChanged : null"
       v-decorator="item.decorator"
       :placeholder="item.placeholder ? item.placeholder : '请输入'"
+      @change="item.change ? item.change : null"
     />
 
     <!-- 时间日期范围选择器 -->
@@ -92,9 +97,11 @@
       v-else-if="item.type == 'dateRange'"
       :showTime="item.showTime"
       :disabled-date="item.disabledDate ? item.disabledDate(item) : null"
-      @change="item.dateChanged ? item.dateChanged : null"
       v-decorator="item.decorator"
-      :placeholder="item.placeholder ? item.placeholder : ['开始时间', '结束时间']"
+      :placeholder="
+        item.placeholder ? item.placeholder : ['开始时间', '结束时间']
+      "
+      @change="item.change ? item.change : null"
     />
 
     <!-- 时间选择 -->
@@ -102,7 +109,7 @@
       style="width: 100%"
       v-else-if="item.type == 'time'"
       :disabled-date="item.disabledDate ? item.disabledDate(item) : null"
-      @change="item.dateChanged ? item.dateChanged : null"
+      @change="item.change ? item.change : null"
       v-decorator="item.decorator"
       :placeholder="item.placeholder ? item.placeholder : '请选择时间'"
     />
@@ -115,6 +122,7 @@
       v-decorator="item.decorator"
       :options="item.options"
       :placeholder="item.placeholder ? item.placeholder : '请选择'"
+      @change="item.change ? item.change : null"
     >
     </a-select>
 
@@ -125,6 +133,7 @@
       v-decorator="item.decorator"
       :options="item.options"
       :placeholder="item.placeholder ? item.placeholder : '请选择'"
+      @change="item.change ? item.change : null"
     />
 
     <!-- checkboxGroup -->
@@ -134,6 +143,7 @@
       v-decorator="item.decorator"
       :options="item.options"
       :placeholder="item.placeholder ? item.placeholder : '请选择'"
+      @change="item.change ? item.change : null"
     />
 
     <!-- 文件上传 -->
@@ -184,9 +194,9 @@ export default {
     disabledDate(current) {
       return current && current < moment().endOf("day").subtract(1, "days");
     },
-  },
-  change(e) {
-    this.change(this.item, e);
+    inputChange(e) {
+      this.change(this.item, e);
+    },
   },
 };
 </script>
