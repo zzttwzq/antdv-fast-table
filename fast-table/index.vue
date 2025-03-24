@@ -74,7 +74,7 @@ export default {
       pagination: {
         current: 1,
         pageSize: 10,
-        total: 0,
+        total: 1000,
         size: "normal",
         showTotal: (total) => `共 ${total} 条记录`,
         showQuickJumper: true,
@@ -223,7 +223,7 @@ export default {
         let data = await this.listRequest(params);
         let list = data && data.data ? data.data : data;
 
-        this.log("getList-onGetListSuccess", data, TableLogLevel.debug);
+        this.log("getList-onGetListSuccess1", data, TableLogLevel.debug);
         this.onRequestSuccess && await this.onRequestSuccess(TableRequestType.onList, data);
 
         this.dataSource = list;
@@ -296,7 +296,8 @@ export default {
         // 调用详情接口
         try {
           if (this.detailRequest) {
-            this.editData = await this.detailRequest(params);
+            let d = await this.detailRequest(params);
+            this.editData = d.data;
           } else {
             this.editData = e;
             this.editData.tag_id = Number(this.editData.tag_id);
@@ -544,7 +545,7 @@ export default {
       }
 
       // if (process.env.NODE_ENV != "prod") {
-      console.log(`[${level}][fast-table->${title}]`, msg && "");
+      console.log(`[${level}][fast-table->${title}]`, msg);
       // }
     },
   },
