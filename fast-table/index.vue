@@ -7,10 +7,10 @@
       </div>
       <div>
         <a-space class="operator">
-          <div>
+          <a-space class="operator">
             <a-button v-if="showTableAdd" @click="addRecord" type="primary">新增</a-button>
             <slot name="topLeftButtons"></slot>
-          </div>
+          </a-space>
           <slot name="topRightButtons"></slot>
         </a-space>
         <StandardTable :rowKey="tableRowKey" :loading="loading" :columns="tableHeaderList2" :dataSource="dataSource"
@@ -568,6 +568,24 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-content: center;
+}
+
+.flex_row_left {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.flex_row_center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex_row_right {
+  display: flex;
+  justify-content: right;
+  align-items: center;
 }
 
 @media screen and (max-width: 900px) {
