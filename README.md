@@ -11,6 +11,13 @@
 根据custom-form-list创建搜索列表，通常是3个为一行排列，带搜索和重置按钮，支持插槽。
 
 ## 更新内容
+
+# 1.2.7
+1. fast-table 表头slot 名称改成 SLOT_TABLE_HEADER
+2. fast-table slot topLeftButtons 名称改成 SLOT_TABLE_HEADER_LEFT_BUTTON
+3. fast-table slot topRightButtons 名称改成 SLOT_TABLE_HEADER_RIGHT_BUTTON
+4. fast-table slot tableCustomForm 名称改成 SLOT_TABLE_CUSTOM_FROM
+
 # 1.2.6
 1. fast-table 表头按钮横向排列
 

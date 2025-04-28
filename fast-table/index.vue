@@ -6,12 +6,17 @@
           @clearSearch="clearSearch"></SimpleSearchView>
       </div>
       <div>
+        <div>
+          <slot name="SLOT_TABLE_HEADER"></slot>
+        </div>
         <a-space class="operator">
           <a-space class="operator">
             <a-button v-if="showTableAdd" @click="addRecord" type="primary">新增</a-button>
             <slot name="topLeftButtons"></slot>
+            <slot name="SLOT_TABLE_HEADER_LEFT_BUTTON"></slot>
           </a-space>
           <slot name="topRightButtons"></slot>
+          <slot name="SLOT_TABLE_HEADER_RIGHT_BUTTON"></slot>
         </a-space>
         <StandardTable :rowKey="tableRowKey" :loading="loading" :columns="tableHeaderList2" :dataSource="dataSource"
           :pagination="pagination" @change="change" :onExpand="onExpand" :scroll="{ x: tableWidth2, y: tableHeight2 }">
@@ -34,6 +39,7 @@
       <CustomFormList v-if="!useCustomForm" ref="form" :prefixClick="prefixClick" :suffixClick="suffixClick"
         :list="tableFormList2" :showBtns="false"></CustomFormList>
       <slot name="tableCustomForm"></slot>
+      <slot name="SLOT_TABLE_CUSTOM_FROM"></slot>
     </a-modal>
   </div>
 </template>
@@ -43,6 +49,7 @@ import {
   TableLogLevel,
   TableRequestType,
 } from "../enum";
+
 import {
   tableProps,
   tableSearchProps,
