@@ -12,6 +12,11 @@
 
 ## 更新内容
 
+# 1.2.8
+1. fast-table 添加 onDetailDataShow 事件
+2. onAdd onEdit onDetailDataShow 添加数据回显
+3. custom-form-item 添加 upload 组件
+
 # 1.2.7
 1. fast-table 表头slot 名称改成 SLOT_TABLE_HEADER
 2. fast-table slot topLeftButtons 名称改成 SLOT_TABLE_HEADER_LEFT_BUTTON

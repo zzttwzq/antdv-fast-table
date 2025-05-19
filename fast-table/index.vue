@@ -10,13 +10,9 @@
           <slot name="SLOT_TABLE_HEADER"></slot>
         </div>
         <a-space class="operator">
-          <a-space class="operator">
-            <a-button v-if="showTableAdd" @click="addRecord" type="primary">新增</a-button>
-            <slot name="topLeftButtons"></slot>
-            <slot name="SLOT_TABLE_HEADER_LEFT_BUTTON"></slot>
-          </a-space>
-          <slot name="topRightButtons"></slot>
-          <slot name="SLOT_TABLE_HEADER_RIGHT_BUTTON"></slot>
+          <a-button v-if="showTableAdd" @click="addRecord" type="primary">新增</a-button>
+          <div><slot name="SLOT_TABLE_HEADER_LEFT_BUTTON"></slot></div>
+          <div><slot name="SLOT_TABLE_HEADER_RIGHT_BUTTON"></slot></div>
         </a-space>
         <StandardTable :rowKey="tableRowKey" :loading="loading" :columns="tableHeaderList2" :dataSource="dataSource"
           :pagination="pagination" @change="change" :onExpand="onExpand" :scroll="{ x: tableWidth2, y: tableHeight2 }">
@@ -304,8 +300,14 @@ export default {
         try {
           if (this.detailRequest) {
             let d = await this.detailRequest(params);
+            this.onDetailDataShow && await this.onDetailDataShow(d.data);
+            this.log("submit->onDetailDataShow", d.data, TableLogLevel.debug);
+            
             this.editData = d.data;
           } else {
+            this.onDetailDataShow && await this.onDetailDataShow(e);
+            this.log("submit->onDetailDataShow", e, TableLogLevel.debug);
+
             this.editData = e;
             this.editData.tag_id = Number(this.editData.tag_id);
           }
@@ -437,6 +439,7 @@ export default {
             if (this.onAdd) {
               let onAdd = await this.onAdd(values);
               this.log("getList-onAdd", onAdd, TableLogLevel.debug);
+              this.log("getList-onAdd", values, TableLogLevel.debug);
               if (onAdd == false) {
                 this.loading = false;
                 return;
@@ -448,6 +451,7 @@ export default {
             if (this.onEdit) {
               let onEdit = await this.onEdit(values);
               this.log("getList-onEdit", onEdit, TableLogLevel.debug);
+              this.log("getList-onEdit", values, TableLogLevel.debug);
               if (onEdit == false) {
                 this.loading = false;
                 return;

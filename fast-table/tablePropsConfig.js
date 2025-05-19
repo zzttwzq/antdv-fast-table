@@ -241,6 +241,7 @@ export const tableRequestMethod = {
  * @param onWillPopEdit: 表格即将弹出编辑弹窗回调  默认空 返回false 将不会调用删除接口
  * @param onWillEditDetail: 表格即将调用详情接口回调  默认空
  * @param onEditDetail: 表格调用详情接口回调  默认空 返回false 将不会调用详情接口
+ * @param onDetailDataShow: 表格展示数据回调  返回要展示的数据
  * @param onDidEditDetail: 表格调用完成详情接口回调  默认空
  * @param onWillEdit: 表格即将编辑回调  默认空
  * @param onEdit: 表格编辑回调  默认空 返回false 将不会调用编辑接口
@@ -331,6 +332,12 @@ export const callBacks = {
     },
     // 表格调用详情接口回调 返回是否调用
     onEditDetail: {
+        type: Function,
+        required: false,
+        default: null,
+    },
+    // 表格展示数据回调
+    onDetailDataShow: {
         type: Function,
         required: false,
         default: null,
