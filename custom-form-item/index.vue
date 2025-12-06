@@ -10,8 +10,11 @@
     }">
 
       <!-- 文本类型 -->
-      <a-input v-if="item.type == 'text'" :disabled="item.disabled ? true : false" v-decorator="item.decorator"
-        :placeholder="item.placeholder ? item.placeholder : '请输入'" @change="item.change ? item.change : null">
+      <a-input v-if="item.type == 'text'" 
+      :maxLength="item.maxLength"
+      :disabled="item.disabled ? true : false" 
+      v-decorator="item.decorator"
+      :placeholder="item.placeholder ? item.placeholder : '请输入'" @change="item.change ? item.change : null">
         <template v-if="item.prefixIcon || item.prefixText" slot="prefix">
           <div style="cursor: pointer" @click="prefixClick(item)">
             <a-icon v-if="item.prefixIcon" :type="item.prefixIcon" />
@@ -27,13 +30,18 @@
       </a-input>
 
       <!-- 长文本类型 -->
-      <a-textarea v-else-if="item.type == 'textArea'" placeholder="请输入" :auto-size="{
+      <a-textarea v-else-if="item.type == 'textArea'" 
+      placeholder="请输入" 
+      :maxLength="item.maxLength"
+       :auto-size="{
         minRows: item.minRows ? item.minRows : 3,
         maxRows: item.maxRows ? item.maxRows : 6,
       }" v-decorator="item.decorator" @change="item.change ? item.change : null" />
 
       <!-- 数字类型 -->
-      <a-input-number v-else-if="item.type == 'number'" :disabled="item.disabled ? true : false" style="width: 100%"
+      <a-input-number v-else-if="item.type == 'number'" 
+      :maxLength="item.maxLength"
+      :disabled="item.disabled ? true : false" style="width: 100%"
         v-decorator="item.decorator" :precision="item.precision ? Number(item.precision) : 0"
         :placeholder="item.placeholder ? item.placeholder : '请输入'" @change="item.change ? item.change : null">
         <template v-if="item.prefixIcon || item.prefixText" slot="prefix">
@@ -52,11 +60,15 @@
 
       <!-- 数字范围类型 -->
       <div class="flex-center" v-else-if="item.type == 'numberRange'">
-        <a-input-number style="display: inline-block; width: 100%" v-decorator="item.decorator"
+        <a-input-number style="display: inline-block; width: 100%" 
+        :maxLength="item.maxLength1"
+        v-decorator="item.decorator"
           :precision="item.precision ? Number(item.precision) : 0"
           :placeholder="item.placeholder ? item.placeholder : '请输入'" @change="item.change ? item.change : null" />
         &nbsp;<span>至</span>&nbsp;
-        <a-input-number style="display: inline-block; width: 100%" v-decorator="item.decorator2"
+        <a-input-number style="display: inline-block; width: 100%" 
+        :maxLength="item.maxLength2"
+        v-decorator="item.decorator2"
           :precision="item.precision2 ? Number(item.precision2) : 0"
           :placeholder="item.placeholder2 ? item.placeholder2 : '请输入'" @change="item.change ? item.change : null" />
       </div>
